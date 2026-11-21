@@ -25,7 +25,9 @@ export function blobUrl(key) {
     case 'fontRegular': u = fromDataUrl(fontRegular); break;
     case 'fontBold': u = fromDataUrl(fontBold); break;
     case 'fontItalic': u = fromDataUrl(fontItalic); break;
-    case 'ocrWorker': u = fromText(ocrWorker, 'text/javascript'); break;
+    // Worker OCR đọc dữ liệu tiếng Việt qua fetch(langPath/vie.traineddata.gz):
+    // chuyển yêu cầu đó sang blob: đã nhúng sẵn.
+    case 'ocrWorker': u = fromText(`self.__bdLang=${JSON.stringify(blobUrl('ocrLang'))};const __bdF=self.fetch.bind(self);self.fetch=(r,o)=>/vie\\.traineddata/.test(String(r))?__bdF(self.__bdLang):__bdF(r,o);\n` + ocrWorker, 'text/javascript'); break;
     // hậu tố "#.js" để tesseract.js coi đây là đường dẫn tệp core cụ thể
     case 'ocrCore': u = fromText(ocrCore, 'text/javascript') + '#core.js'; break;
     case 'ocrLang': u = fromDataUrl(ocrLang); break;

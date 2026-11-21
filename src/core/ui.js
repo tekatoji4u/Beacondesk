@@ -138,8 +138,8 @@ export function status() {
 }
 /** Chạy một tác vụ có nút bấm: khoá nút, bắt lỗi và hiện thông báo. */
 export async function run(btn, st, fn) {
-  if (btn.disabled) return;
-  btn.disabled = true;
+  if (btn?.disabled) return;
+  if (btn) btn.disabled = true;
   st?.clear();
   try {
     await fn();
@@ -147,7 +147,7 @@ export async function run(btn, st, fn) {
     console.error(e);
     st?.err(e?.message || String(e));
   } finally {
-    btn.disabled = false;
+    if (btn) btn.disabled = false;
   }
 }
 export function button(label, { kind = '', iconName, onClick, attrs } = {}) {
