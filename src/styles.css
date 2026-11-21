@@ -421,3 +421,7 @@ dialog.sheet .sb { padding: 4px 20px 20px; overflow-y: auto; max-height: calc(86
 .quad-stage .quad { fill: rgba(37, 99, 235, .14); stroke: #2563eb; }
 .quad-stage .quad-dot { fill: #fbbf24; stroke: #fff; stroke-width: 3; cursor: grab; vector-effect: non-scaling-stroke; }
 .quad-stage .quad-dot:focus { outline: none; fill: #f59e0b; }
+
+/* ---------- Danh sách hướng dẫn ---------- */
+.steps, ul.plain { margin: 8px 0 0; padding-left: 22px; line-height: 1.6; }
+.steps li, ul.plain li { margin: 4px 0; }

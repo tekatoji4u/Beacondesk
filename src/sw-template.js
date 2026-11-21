@@ -21,17 +21,18 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('message', (e) => {
   if (e.data === 'skip-waiting') self.skipWaiting();
-  if (e.data?.type === 'cache-all') cacheAll(e.ports[0], e.data.files);
+  if (e.data?.type === 'cache-all') cacheAll(e.ports[0], e.data.core);
 });
 
-async function cacheAll(port, files) {
+// core: tên tệp lõi OCR hợp với máy (simd / relaxedsimd / thường) — chỉ tải một bản (~4 MB)
+async function cacheAll(port, core) {
   try {
-    const list = files?.length ? files : LAZY;
+    const list = LAZY.filter((u) => !/tesseract-core-/.test(u) || !core || u.endsWith('/' + core));
     const c = await caches.open(OCR_CACHE);
     let done = 0;
     for (const u of list) {
       const url = new URL(u, self.registration.scope).href;
-      if (!(await c.match(url))) {
+      if (!(await c.match(url, { ignoreVary: true }))) {
         const r = await fetch(url, { cache: 'no-cache' });
         if (!r.ok) throw new Error('Không tải được ' + u);
         await c.put(url, r);
@@ -76,7 +77,7 @@ self.addEventListener('fetch', (e) => {
         const r = await fetch(req);
         return r;
       } catch {
-        return (await caches.match('./', { ignoreSearch: true })) || (await caches.match('./index.html')) || Response.error();
+        return (await caches.match('./', { ignoreSearch: true, ignoreVary: true })) || (await caches.match('./index.html')) || Response.error();
       }
     })());
     return;
@@ -86,7 +87,7 @@ self.addEventListener('fetch', (e) => {
   if (url.pathname.includes('/ocr/') || url.pathname.includes('heic2any')) {
     e.respondWith((async () => {
       const c = await caches.open(OCR_CACHE);
-      const hit = await c.match(req, { ignoreSearch: true });
+      const hit = await c.match(req, { ignoreSearch: true, ignoreVary: true });
       if (hit) return hit;
       const r = await fetch(req);
       if (r.ok) c.put(req, r.clone());
@@ -97,7 +98,7 @@ self.addEventListener('fetch', (e) => {
 
   // Còn lại: cache trước, mạng sau (tệp có mã băm nên an toàn).
   e.respondWith((async () => {
-    const hit = await caches.match(req, { ignoreSearch: true });
+    const hit = await caches.match(req, { ignoreSearch: true, ignoreVary: true });
     if (hit) return hit;
     try {
       const r = await fetch(req);

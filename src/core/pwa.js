@@ -59,8 +59,18 @@ export async function cacheEverything(onProgress) {
       else if (d.type === 'done') resolve(d);
       else if (d.type === 'error') reject(new Error(d.message));
     };
-    reg.active.postMessage({ type: 'cache-all' }, [ch.port2]);
+    ocrCoreFile().then((core) => reg.active.postMessage({ type: 'cache-all', core }, [ch.port2]));
   });
+}
+
+/** Tệp lõi OCR mà tesseract.js sẽ chọn trên máy này. */
+export async function ocrCoreFile() {
+  try {
+    const { simd, relaxedSimd } = await import('wasm-feature-detect');
+    if (await relaxedSimd()) return 'tesseract-core-relaxedsimd-lstm.wasm.js';
+    if (await simd()) return 'tesseract-core-simd-lstm.wasm.js';
+  } catch { /* dùng bản thường */ }
+  return 'tesseract-core-lstm.wasm.js';
 }
 
 export async function offlineStatus() {
@@ -69,7 +79,7 @@ export async function offlineStatus() {
   let ocr = false, core = false;
   for (const k of keys) {
     const c = await caches.open(k);
-    if (await c.match(new URL('ocr/vie.traineddata.gz', location.href).href)) ocr = true;
+    if (await c.match(new URL('ocr/vie.traineddata.gz', document.baseURI).href)) ocr = true;
     if ((await c.keys()).length > 5) core = true;
   }
   return { ready: core, ocr };
