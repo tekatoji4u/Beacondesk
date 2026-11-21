@@ -412,3 +412,12 @@ dialog.sheet .sb { padding: 4px 20px 20px; overflow-y: auto; max-height: calc(86
 .summary-out h3 { margin: 14px 0 4px; font-size: 15px; }
 .summary-out p { margin: 6px 0; }
 .summary-out p.li { padding-left: 1em; text-indent: -1em; }
+
+/* ---------- In A4: chỉnh 4 góc ảnh ---------- */
+.quad-editor { margin-top: 12px; }
+.quad-stage { position: relative; max-width: 560px; margin: 8px auto 0; touch-action: none; user-select: none; }
+.quad-stage img { display: block; width: 100%; height: auto; border-radius: 10px; }
+.quad-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.quad-stage .quad { fill: rgba(37, 99, 235, .14); stroke: #2563eb; }
+.quad-stage .quad-dot { fill: #fbbf24; stroke: #fff; stroke-width: 3; cursor: grab; vector-effect: non-scaling-stroke; }
+.quad-stage .quad-dot:focus { outline: none; fill: #f59e0b; }
