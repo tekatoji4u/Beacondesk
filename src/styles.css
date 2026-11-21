@@ -267,7 +267,7 @@ input[type=range] { width: 100%; accent-color: var(--blue); }
 .tool-group { margin-top: 16px; }
 .tool-group h4 { font-size: 11.5px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); margin: 0 0 8px 2px; }
 .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
-.tool-tile { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 14px; border: 1px solid var(--line); background: var(--card); text-align: left; font-weight: 600; font-size: 13.5px; min-height: 52px; transition: transform .15s, box-shadow .15s, border-color .15s; }
+.tool-tile { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 14px; border: 1px solid var(--line); background: var(--card); text-align: left; font-weight: 600; color: inherit; text-decoration: none; font-size: 13.5px; min-height: 52px; transition: transform .15s, box-shadow .15s, border-color .15s; }
 .tool-tile .ico { flex-basis: 30px; width: 30px; height: 30px; border-radius: 9px; }
 .tool-tile .ico svg { width: 16px; height: 16px; }
 .tool-tile:hover { transform: translateY(-1px); box-shadow: 0 8px 18px -10px rgba(20, 43, 69, .4); }
@@ -359,6 +359,8 @@ dialog.sheet .sb { padding: 4px 20px 20px; overflow-y: auto; max-height: calc(86
   .brand strong { font-size: 18px; }
   .brand small { display: none; }
   .net-badge span { display: none; }
+  .header-actions .btn .btn-text { display: none; }
+  .header-actions { flex-wrap: nowrap; gap: 6px; }
   .net-badge { padding: 9px; }
   .hero { padding: 16px 18px; border-radius: 18px; margin-bottom: 12px; }
   .hero p { font-size: 13.5px; }
@@ -425,3 +427,9 @@ dialog.sheet .sb { padding: 4px 20px 20px; overflow-y: auto; max-height: calc(86
 /* ---------- Danh sách hướng dẫn ---------- */
 .steps, ul.plain { margin: 8px 0 0; padding-left: 22px; line-height: 1.6; }
 .steps li, ul.plain li { margin: 4px 0; }
+@media (max-width: 420px) {
+  .header { gap: 8px; }
+  .brand { gap: 8px; }
+  .brand .logo { width: 36px; height: 36px; border-radius: 10px; }
+  .brand strong { font-size: 17px; }
+}

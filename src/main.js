@@ -41,7 +41,7 @@ theme.set(theme.get());
 function shell() {
   const logo = h('img', { class: 'logo', src: LOGO, alt: '' });
   const net = h('span', { class: 'net-badge', title: 'Trạng thái kết nối' }, h('i'), h('span'));
-  const installBtn = h('button', { type: 'button', class: 'btn btn-sm btn-primary', hidden: true }, h('span', { html: icon('installs'), style: 'display:contents' }), 'Cài ứng dụng');
+  const installBtn = h('button', { type: 'button', class: 'btn btn-sm btn-primary', hidden: true, title: 'Cài ứng dụng', 'aria-label': 'Cài ứng dụng' }, h('span', { html: icon('installs'), style: 'display:contents' }), h('span', { class: 'btn-text' }, 'Cài ứng dụng'));
   const themeBtn = h('button', { type: 'button', class: 'theme-switch', 'aria-label': 'Đổi giao diện sáng / tối', onclick: () => theme.set(theme.get() === 'dark' ? 'light' : 'dark') },
     h('span', { html: icon('moon', 'moon'), style: 'display:contents' }), h('span', { html: icon('sun', 'sun'), style: 'display:contents' }), h('span', { class: 'knob' }));
   const header = h('header', { class: 'header' },
