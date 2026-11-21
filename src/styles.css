@@ -391,3 +391,18 @@ dialog.sheet .sb { padding: 4px 20px 20px; overflow-y: auto; max-height: calc(86
 @media print {
   .sidebar, .header, .hero, .footer { display: none !important; }
 }
+
+/* ---------- Soạn văn bản: biểu mẫu + xem trước khổ A4 ---------- */
+.compose { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 18px; align-items: start; }
+@media (min-width: 1180px) {
+  .compose { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); }
+  .compose-preview { position: sticky; top: 76px; max-height: calc(100vh - 92px); overflow: auto; }
+}
+.paper-frame { margin-top: 12px; overflow: hidden; border-radius: 10px; background: var(--card-2); padding: 2px; }
+.paper {
+  width: 21cm; min-height: 29.7cm; box-sizing: border-box; padding: 2cm 1.5cm 2cm 3cm;
+  background: #fff; color: #000; font-family: 'Times New Roman', Times, 'Liberation Serif', 'DejaVu Serif', serif;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .18); transform-origin: top left;
+}
+.paper p { margin: 0; }
+.paper table td { border: 0; }
