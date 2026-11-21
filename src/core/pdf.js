@@ -26,8 +26,12 @@ let pdfjsP;
 export function pdfjs() {
   pdfjsP ||= (async () => {
     const lib = await import('pdfjs-dist');
-    const workerUrl = await getAsset('pdfWorker');
-    lib.GlobalWorkerOptions.workerPort = new Worker(workerUrl, { type: 'module' });
+    if (__SINGLE__) {
+      // file:// không chạy được module worker từ blob: — pdf.js chạy trên luồng chính
+      globalThis.pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.min.mjs');
+    } else {
+      lib.GlobalWorkerOptions.workerPort = new Worker(await getAsset('pdfWorker'), { type: 'module' });
+    }
     return lib;
   })().catch((e) => { pdfjsP = null; throw e; });
   return pdfjsP;

@@ -1,5 +1,4 @@
 // Chỉ dùng cho bản một tệp HTML: nhúng toàn bộ tài nguyên vào trong tệp.
-import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?raw';
 import fontRegular from '../../public/fonts/DejaVuSerif.ttf?inline';
 import fontBold from '../../public/fonts/DejaVuSerif-Bold.ttf?inline';
 import fontItalic from '../../public/fonts/DejaVuSerif-Italic.ttf?inline';
@@ -21,16 +20,13 @@ export function blobUrl(key) {
   if (urls.has(key)) return urls.get(key);
   let u;
   switch (key) {
-    case 'pdfWorker': u = fromText(pdfWorker, 'text/javascript'); break;
     case 'fontRegular': u = fromDataUrl(fontRegular); break;
     case 'fontBold': u = fromDataUrl(fontBold); break;
     case 'fontItalic': u = fromDataUrl(fontItalic); break;
-    // Worker OCR đọc dữ liệu tiếng Việt qua fetch(langPath/vie.traineddata.gz):
-    // chuyển yêu cầu đó sang blob: đã nhúng sẵn.
-    case 'ocrWorker': u = fromText(`self.__bdLang=${JSON.stringify(blobUrl('ocrLang'))};const __bdF=self.fetch.bind(self);self.fetch=(r,o)=>/vie\\.traineddata/.test(String(r))?__bdF(self.__bdLang):__bdF(r,o);\n` + ocrWorker, 'text/javascript'); break;
-    // hậu tố "#.js" để tesseract.js coi đây là đường dẫn tệp core cụ thể
-    case 'ocrCore': u = fromText(ocrCore, 'text/javascript') + '#core.js'; break;
-    case 'ocrLang': u = fromDataUrl(ocrLang); break;
+    // Worker OCR chạy từ blob: trên file:// không importScripts/fetch được blob: khác,
+    // nên ghép sẵn lõi Tesseract (định nghĩa TesseractCore, worker sẽ bỏ qua bước tải lõi)
+    // và chuyển yêu cầu tải dữ liệu tiếng Việt sang data: URL nhúng trong chính worker.
+    case 'ocrWorker': u = fromText(ocrCore + `;\nself.TesseractCore=TesseractCore;self.__bdLang=${JSON.stringify(ocrLang)};const __bdF=self.fetch.bind(self);self.fetch=(r,o)=>/vie\\.traineddata/.test(String(r))?__bdF(self.__bdLang):__bdF(r,o);\n` + ocrWorker, 'text/javascript'); break;
     default: throw new Error('Thiếu tài nguyên: ' + key);
   }
   urls.set(key, u);

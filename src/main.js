@@ -4,6 +4,7 @@ import { icon, tintStyle } from './core/icons.js';
 import { pref, setPref } from './core/store.js';
 import { setupPwa } from './core/pwa.js';
 import { feedVisible } from './core/handoff.js';
+import LOGO from '../public/icons/icon.svg?url';
 
 export const APP = 'BeaconDesk';
 export const VERSION = __APP_VERSION__;
@@ -109,7 +110,6 @@ function shell() {
   return { hero, main, sidebar };
 }
 
-const LOGO = new URL('../public/icons/icon.svg', import.meta.url).href;
 const ui = shell();
 
 async function route() {

@@ -1,5 +1,5 @@
 // Xuất tệp Word (.docx) từ các khối nội dung — khổ A4, lề theo Nghị định 30.
-import { Document, Packer, Paragraph, TextRun, AlignmentType, HeadingLevel, PageBreak, Table, TableRow, TableCell, WidthType, BorderStyle, Footer, Header, PageNumber } from 'docx';
+import { Document, Packer, Paragraph, TextRun, AlignmentType, HeadingLevel, PageBreak, Table, TableRow, TableCell, WidthType, BorderStyle, Header, PageNumber } from 'docx';
 
 const CM = 567; // twip / cm
 export const ND30_MARGIN = { top: 2 * CM, bottom: 2 * CM, left: 3 * CM, right: 1.5 * CM };
@@ -81,4 +81,3 @@ export function tableOf(rows, font = 'Times New Roman', sz = 24) {
     })),
   });
 }
-export { Footer };

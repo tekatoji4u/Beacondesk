@@ -17,7 +17,7 @@ export function getOcr(onStatus) {
     const T = await import('tesseract.js');
     const { createWorker, createScheduler } = T.default || T;
     const base = __SINGLE__
-      ? { workerPath: await getAsset('ocrWorker'), corePath: await getAsset('ocrCore'), langPath: 'https://beacondesk.local/ocr' }
+      ? { workerPath: await getAsset('ocrWorker'), corePath: 'https://beacondesk.local/ocr/core.js', langPath: 'https://beacondesk.local/ocr' }
       : { workerPath: await getAsset('ocrWorker'), corePath: await getAsset('ocrCoreDir'), langPath: await getAsset('ocrCoreDir') };
     const n = workerCount();
     const scheduler = createScheduler();

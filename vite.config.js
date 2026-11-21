@@ -41,12 +41,13 @@ export default defineConfig(({ mode }) => {
   const single = mode === 'single';
   return {
     base: './',
+    assetsInclude: ['**/*.gz'],
     define: {
       __APP_VERSION__: JSON.stringify(pkg.version),
       __SINGLE__: JSON.stringify(single),
     },
     build: single
-      ? { outDir: 'dist-single', assetsInlineLimit: 100_000_000, chunkSizeWarningLimit: 100_000, emptyOutDir: true }
+      ? { outDir: 'dist-single', copyPublicDir: false, assetsInlineLimit: 100_000_000, chunkSizeWarningLimit: 100_000, emptyOutDir: true }
       : { outDir: 'dist', target: 'es2022', chunkSizeWarningLimit: 4000, emptyOutDir: true },
     worker: { format: 'es' },
     plugins: [
@@ -54,6 +55,13 @@ export default defineConfig(({ mode }) => {
         name: 'beacondesk-html',
         transformIndexHtml(html) {
           const csp = `<meta http-equiv="Content-Security-Policy" content="${single ? CSP_SINGLE : CSP_ONLINE}" />`;
+          if (single) {
+            // bản một tệp không có thư mục icons/: nhúng biểu tượng thẳng vào trang
+            const svg = readFileSync(new URL('./public/icons/icon.svg', import.meta.url));
+            html = html
+              .replace('./icons/icon.svg', 'data:image/svg+xml;base64,' + svg.toString('base64'))
+              .replace(/\s*<link rel="apple-touch-icon"[^>]*>/, '');
+          }
           return html
             .replace('<!--CSP-->', csp)
             .replace('<!--MANIFEST-->', single ? '' : '<link rel="manifest" href="./manifest.webmanifest" />');
