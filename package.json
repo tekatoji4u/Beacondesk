@@ -1,0 +1,37 @@
+{
+  "name": "beacondesk",
+  "version": "3.0.0",
+  "description": "BeaconDesk – bộ công cụ văn phòng chạy trên trình duyệt, online và offline",
+  "scripts": {
+    "prepare-assets": "node scripts/copy-assets.mjs",
+    "dev": "npm run prepare-assets && vite",
+    "build": "npm run prepare-assets && vite build && node scripts/gen-sw.mjs",
+    "build:single": "npm run prepare-assets && vite build --mode single",
+    "build:all": "npm run build && npm run build:single",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tekatoji4u/beacondesk.git"
+  },
+  "devDependencies": {
+    "vite": "^8.3.8",
+    "vite-plugin-singlefile": "^2.3.4"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.12.0",
+    "@pdf-lib/fontkit": "^1.1.1",
+    "@tesseract.js-data/vie": "^1.0.0",
+    "docx": "^9.16.0",
+    "heic2any": "^0.0.4",
+    "jszip": "^3.10.2",
+    "mammoth": "^1.13.0",
+    "pako": "^1.0.11",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.5.438",
+    "tesseract.js": "^7.0.0",
+    "wasm-feature-detect": "^1.10.1"
+  },
+  "private": true,
+  "type": "module"
+}
