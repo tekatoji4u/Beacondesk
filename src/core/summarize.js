@@ -25,7 +25,15 @@ export function keywords(text, n = 12) {
       add(t[i] + ' ' + t[i + 1]);
     }
   }
-  return [...freq].filter(([, c]) => c >= 2).sort((a, b) => b[1] - a[1]).slice(0, n).map(([k, c]) => ({ k, c }));
+  // bỏ cụm "nối" giữa hai cụm mạnh hơn (VD: "cao chất" giữa "nâng cao" và "chất lượng")
+  const out = [];
+  for (const [k, c] of [...freq].filter(([, c]) => c >= 2).sort((a, b) => b[1] - a[1])) {
+    const [x, y] = k.split(' ');
+    if (out.some((o) => o.k.endsWith(' ' + x)) && out.some((o) => o.k.startsWith(y + ' '))) continue;
+    out.push({ k, c });
+    if (out.length >= n) break;
+  }
+  return out;
 }
 
 function bigrams(s) {

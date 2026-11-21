@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
 
 // Các máy chủ AI mà người dùng có thể tự bật (chỉ ở bản online).
-const AI_HOSTS = 'https://api.anthropic.com https://api.openai.com https://generativelanguage.googleapis.com';
+const AI_HOSTS = 'https://api.anthropic.com';
 
 const CSP_ONLINE = [
   "default-src 'self'",

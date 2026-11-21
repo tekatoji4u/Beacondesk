@@ -406,3 +406,9 @@ dialog.sheet .sb { padding: 4px 20px 20px; overflow-y: auto; max-height: calc(86
 }
 .paper p { margin: 0; }
 .paper table td { border: 0; }
+
+/* ---------- Tóm tắt ---------- */
+.summary-out { line-height: 1.6; font-size: 15px; }
+.summary-out h3 { margin: 14px 0 4px; font-size: 15px; }
+.summary-out p { margin: 6px 0; }
+.summary-out p.li { padding-left: 1em; text-indent: -1em; }
