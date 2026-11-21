@@ -69,6 +69,8 @@ self.addEventListener('fetch', (e) => {
   }
 
   if (req.method !== 'GET' || url.origin !== self.location.origin) return;
+  // Bản một tệp HTML (~13 MB) để tải về: không lưu vào bộ nhớ đệm.
+  if (url.pathname.includes('/download/')) return;
 
   // Điều hướng trang: ưu tiên mạng (lấy bản mới), mất mạng thì dùng bản đã lưu.
   if (req.mode === 'navigate') {

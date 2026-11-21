@@ -29,6 +29,8 @@ function offlineCard() {
       h('div', null, h('b', { style: `color:var(--${s.ocr ? 'ok' : 'warn'})` }, s.ocr ? 'Sẵn sàng' : 'Chưa tải'), h('span', null, 'Nhận dạng chữ (OCR) tiếng Việt'))));
   };
   paint();
+  // Bản một tệp HTML chỉ có trên trang đã đăng (GitHub Pages, xem .github/workflows/pages.yml)
+  const single = __DOWNLOAD__ ? h('a', { class: 'btn btn-ghost', href: './download/BeaconDesk.html', download: 'BeaconDesk.html' }, 'Tải bản một tệp HTML') : null;
   const go = button('Tải gói ngoại tuyến', { kind: 'btn-primary', iconName: 'download' });
   go.addEventListener('click', () => run(go, st, async () => {
     const { cacheEverything } = await import('../core/pwa.js');
@@ -40,8 +42,8 @@ function offlineCard() {
   }));
   return h('section', { class: 'card' },
     h('h2', null, 'Dùng khi mất mạng'),
-    h('p', { class: 'sub' }, 'Giao diện và công cụ PDF, Word được lưu tự động sau lần mở đầu tiên. Bộ nhận dạng chữ (khoảng 6 MB) chỉ tải khi dùng lần đầu, hoặc tải trước tại đây để dùng khi không có mạng.'),
-    state, h('div', { class: 'row mt' }, go), pr.el, st.el);
+    h('p', { class: 'sub' }, 'Giao diện và công cụ PDF, Word được lưu tự động sau lần mở đầu tiên. Bộ nhận dạng chữ (khoảng 6 MB) chỉ tải khi dùng lần đầu, hoặc tải trước tại đây để dùng khi không có mạng. Bản một tệp HTML chạy được cả khi mở thẳng từ máy, không cần cài.'),
+    state, h('div', { class: 'row mt' }, go, single), pr.el, st.el);
 }
 
 function iosCard() {

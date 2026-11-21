@@ -45,6 +45,8 @@ export default defineConfig(({ mode }) => {
     define: {
       __APP_VERSION__: JSON.stringify(pkg.version),
       __SINGLE__: JSON.stringify(single),
+      // trang đã đăng có kèm bản một tệp HTML tại download/BeaconDesk.html
+      __DOWNLOAD__: JSON.stringify(!single && process.env.BD_SINGLE_DOWNLOAD === '1'),
     },
     build: single
       ? { outDir: 'dist-single', copyPublicDir: false, assetsInlineLimit: 100_000_000, chunkSizeWarningLimit: 100_000, emptyOutDir: true }
