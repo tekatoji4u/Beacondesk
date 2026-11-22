@@ -93,6 +93,44 @@ function quadsFrom(cv, bin, W, H, out) {
   free(contours, hier);
 }
 
+/** Ghép các đường thẳng dài ngoài cùng ở 4 phía thành các tứ giác ứng viên. */
+function houghQuads(cv, edges, W, H, out) {
+  const lines = new cv.Mat();
+  const minLen = Math.min(W, H) * 0.3;
+  cv.HoughLinesP(edges, lines, 1, Math.PI / 180, 60, minLen, Math.max(W, H) * 0.025);
+  const hz = [], vt = [];
+  for (let i = 0; i < lines.rows; i++) {
+    const [x1, y1, x2, y2] = lines.data32S.slice(i * 4, i * 4 + 4);
+    const ang = Math.abs(Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI);
+    if (ang < 30 || ang > 150) hz.push({ p: [x1, y1], q: [x2, y2], pos: (y1 + y2) / 2 });
+    else if (ang > 60 && ang < 120) vt.push({ p: [x1, y1], q: [x2, y2], pos: (x1 + x2) / 2 });
+  }
+  lines.delete();
+  // mỗi phía: tối đa 3 đường ngoài cùng, cách nhau đủ xa
+  const pick = (arr, from, asc, lim) => {
+    const r = [];
+    for (const l of arr.filter((l) => (asc ? l.pos < lim : l.pos > lim)).sort((a, b) => (asc ? a.pos - b.pos : b.pos - a.pos))) {
+      if (r.every((x) => Math.abs(x.pos - l.pos) > from * 0.015)) r.push(l);
+      if (r.length === 3) break;
+    }
+    return r;
+  };
+  const T = pick(hz, H, true, H * 0.45), B = pick(hz, H, false, H * 0.55), L = pick(vt, W, true, W * 0.45), R = pick(vt, W, false, W * 0.55);
+  for (const t of T) for (const b of B) for (const l of L) for (const r of R) {
+    const q = [cross(t, l), cross(t, r), cross(b, r), cross(b, l)];
+    if (q.some((p) => !p || p[0] < -W * 0.05 || p[1] < -H * 0.05 || p[0] > W * 1.05 || p[1] > H * 1.05)) continue;
+    const area = quadOk(q, W, H);
+    if (area) out.push({ q, area, fill: 1 });
+  }
+}
+function cross(a, b) {
+  const d1 = [a.q[0] - a.p[0], a.q[1] - a.p[1]], d2 = [b.q[0] - b.p[0], b.q[1] - b.p[1]];
+  const den = d1[0] * d2[1] - d1[1] * d2[0];
+  if (Math.abs(den) < 1e-6) return null;
+  const t = ((b.p[0] - a.p[0]) * d2[1] - (b.p[1] - a.p[1]) * d2[0]) / den;
+  return [a.p[0] + d1[0] * t, a.p[1] + d1[1] * t];
+}
+
 /** Ngũ giác → tứ giác: bỏ cạnh ngắn nhất, giao hai cạnh kề nó để khôi phục góc bị che. */
 function cornerFromFive(p) {
   const len = (i) => dist(p[i], p[(i + 1) % 5]);
@@ -136,6 +174,9 @@ export function detectDocument(cv, c) {
       if (support.empty()) tmp.copyTo(support); else cv.bitwise_or(support, tmp, support);
       quadsFrom(cv, tmp, W, H, found);
     }
+    // (1b) Đường thẳng dài (Hough): tìm được mép giấy cả khi viền đứt quãng, nền trắng,
+    // hoặc giấy có hoa văn dày làm đường bao bị dính vào bên trong
+    houghQuads(cv, edges, W, H, found);
     // (2) Cạnh màu: giấy trắng trên nền sáng thường chỉ khác nhau về sắc độ
     const hsv = new cv.Mat(), ch = new cv.MatVector();
     cv.cvtColor(src, hsv, cv.COLOR_RGBA2RGB);
@@ -301,19 +342,24 @@ export function enhanceDocument(cv, c, mode = 'auto') {
       }
       cv.merge(norm, rgb);
       free(ch, norm);
-      // tăng tương phản cục bộ trên kênh sáng (CLAHE), giữ nguyên sắc màu
+      // nền giấy và hoa văn in chìm nhạt → trắng; chữ đậm hơn; vùng gần trắng bỏ ám màu,
+      // màu đậm (dấu đỏ, chữ ký xanh) giữ nguyên
       const lab = new cv.Mat(), lch = new cv.MatVector();
       cv.cvtColor(rgb, lab, cv.COLOR_RGB2Lab);
       cv.split(lab, lch);
       const L = lch.get(0);
-      const clahe = new cv.CLAHE(1.6, new cv.Size(8, 8));
-      clahe.apply(L, L);
-      levels(cv, L, 25, 232, 1.15);
+      paperLevels(cv, L);
       lch.set(0, L);
       cv.merge(lch, lab);
+      const d = lab.data;
+      for (let i = 0; i < d.length; i += 3) {
+        const k = Math.min(1, Math.max(0, (250 - d[i]) / 70));
+        d[i + 1] = 128 + (d[i + 1] - 128) * k;
+        d[i + 2] = 128 + (d[i + 2] - 128) * k;
+      }
       cv.cvtColor(lab, rgb, cv.COLOR_Lab2RGB);
-      free(lab, lch, L, clahe);
-      unsharp(cv, rgb, 0.6, long / 1400);
+      free(lab, lch, L);
+      unsharp(cv, rgb, 0.8, long / 1400);
       cv.cvtColor(rgb, out, cv.COLOR_RGB2RGBA);
       free(rgb, den);
       return { canvas: show(cv, out), bw: false };
@@ -324,25 +370,46 @@ export function enhanceDocument(cv, c, mode = 'auto') {
     cv.divide(gray, bg, gray, 255);
     bg.delete();
     if (mode === 'gray') {
-      cv.bilateralFilter(gray.clone(), out, 5, 25, 5);
-      const clahe = new cv.CLAHE(1.6, new cv.Size(8, 8));
-      clahe.apply(out, out);
-      clahe.delete();
-      levels(cv, out, 25, 230, 1.15);
-      unsharp(cv, out, 0.6, long / 1400);
+      cv.bilateralFilter(gray, out, 5, 25, 5);
+      paperLevels(cv, out);
+      unsharp(cv, out, 0.8, long / 1400);
       gray.delete();
       return { canvas: show(cv, out), bw: false };
     }
     // Đen trắng: ngưỡng thích ứng theo vùng, rồi xoá hạt nhiễu lấm tấm và viền đen ở mép
+    // làm trắng nền và hoa văn in chìm trước, rồi mới lấy ngưỡng thích ứng
+    paperLevels(cv, gray);
     cv.medianBlur(gray, gray, 3);
     const block = 2 * Math.round(long / 90) + 1;
-    cv.adaptiveThreshold(gray, out, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, block, 14);
+    cv.adaptiveThreshold(gray, out, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, block, 12);
     gray.delete();
     despeckle(cv, out);
     return { canvas: show(cv, out), bw: true };
   } finally {
     free(rgba, out);
   }
+}
+
+/**
+ * Kéo mức theo nội dung: ngưỡng Otsu tách chữ khỏi nền; mọi thứ sáng hơn điểm trắng
+ * (nền giấy, hoa văn in chìm nhạt, vân giấy) thành trắng tinh. Trả về điểm trắng đã dùng.
+ */
+function paperLevels(cv, L) {
+  const t = new cv.Mat();
+  const otsu = cv.threshold(L, t, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU);
+  t.delete();
+  // điểm trắng = chân trái của đỉnh "giấy" trong biểu đồ sáng: giấy sạch (đỉnh hẹp) giữ được chữ nhạt,
+  // giấy có hoa văn in chìm (đỉnh rộng) thì hoa văn bị đẩy về trắng
+  const h = new Float64Array(256), d = L.data;
+  for (let i = 0; i < d.length; i++) h[d[i]]++;
+  const sm = (i) => (h[Math.max(0, i - 2)] + h[Math.max(0, i - 1)] + h[i] + h[Math.min(255, i + 1)] + h[Math.min(255, i + 2)]) / 5;
+  let peak = otsu;
+  for (let i = otsu; i < 256; i++) if (sm(i) > sm(peak)) peak = i;
+  let foot = peak;
+  while (foot > otsu && sm(foot - 1) >= sm(peak) * 0.1) foot--;
+  const wp = Math.round(Math.min(peak - 6, Math.max(170, foot - 5)));
+  levels(cv, L, 20, wp, 1.15);
+  return wp;
 }
 
 function show(cv, m) {
