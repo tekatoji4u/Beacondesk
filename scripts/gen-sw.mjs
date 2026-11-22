@@ -14,8 +14,8 @@ function walk(dir) {
   });
 }
 const all = walk(dist).map((p) => relative(dist, p).split('\\').join('/'));
-// OCR (≈5 MB) chỉ tải khi dùng tới, hoặc khi người dùng bấm "Tải gói ngoại tuyến".
-const isLazy = (p) => p.startsWith('ocr/') || /heic2any/.test(p);
+// OCR (≈5 MB) và OpenCV (≈11 MB) chỉ tải khi dùng tới, hoặc khi người dùng bấm "Tải gói ngoại tuyến".
+const isLazy = (p) => p.startsWith('ocr/') || p.startsWith('cv/') || /heic2any/.test(p);
 const lazy = all.filter(isLazy);
 const precache = all.filter((p) => !isLazy(p) && p !== 'sw.js' && !p.endsWith('.map'));
 const hash = createHash('sha256');

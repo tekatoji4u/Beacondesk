@@ -425,6 +425,12 @@ dialog.sheet .sb { padding: 4px 20px 20px; overflow-y: auto; max-height: calc(86
 .quad-stage .quad { fill: rgba(37, 99, 235, .14); stroke: #2563eb; }
 .quad-stage .quad-dot { fill: #fbbf24; stroke: #fff; stroke-width: 3; cursor: grab; vector-effect: non-scaling-stroke; }
 .quad-stage .quad-dot:focus { outline: none; fill: #f59e0b; }
+.scan-stage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; align-items: start; }
+.scan-stage .quad-stage { margin-top: 0; width: 100%; }
+.scan-preview { display: flex; justify-content: center; }
+.scan-preview img { display: block; max-width: 100%; max-height: 70vh; background: #fff; border-radius: 4px; box-shadow: 0 8px 24px -10px rgba(20, 43, 69, .45); }
+.scan-preview img:not([src]) { width: 60%; aspect-ratio: 1 / 1.414; }
+@media (min-width: 760px) { .scan-stage { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); } }
 
 /* ---------- Danh sách hướng dẫn ---------- */
 .steps, ul.plain { margin: 8px 0 0; padding-left: 22px; line-height: 1.6; }
