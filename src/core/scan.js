@@ -102,10 +102,24 @@ function houghQuads(cv, edges, W, H, out) {
   for (let i = 0; i < lines.rows; i++) {
     const [x1, y1, x2, y2] = lines.data32S.slice(i * 4, i * 4 + 4);
     const ang = Math.abs(Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI);
-    if (ang < 30 || ang > 150) hz.push({ p: [x1, y1], q: [x2, y2], pos: (y1 + y2) / 2 });
-    else if (ang > 60 && ang < 120) vt.push({ p: [x1, y1], q: [x2, y2], pos: (x1 + x2) / 2 });
+    // mép giấy chụp nghiêng hiếm khi lệch quá 20°; đường chéo hơn thường là bóng đổ, nếp gấp
+    if (ang < 20 || ang > 160) hz.push({ p: [x1, y1], q: [x2, y2], pos: (y1 + y2) / 2 });
+    else if (ang > 70 && ang < 110) vt.push({ p: [x1, y1], q: [x2, y2], pos: (x1 + x2) / 2 });
   }
   lines.delete();
+  // giấy tràn ra ngoài khung ảnh: lấy luôn mép ảnh làm cạnh (được chấm điểm riêng ở detectDocument).
+  // Không làm vậy nếu gần mép đó có một đường thẳng dài (mép giấy thật, thường gặp khi nền trắng)
+  const len = (l) => Math.hypot(l.q[0] - l.p[0], l.q[1] - l.p[1]);
+  const longNear = (arr, dim, span, near) => arr.some((l) => near(l.pos) &&
+    arr.filter((m) => Math.abs(m.pos - l.pos) < dim * 0.015).reduce((s, m) => s + len(m), 0) > span * 0.5);
+  const blocked = {
+    top: longNear(hz, H, W, (y) => y < H * 0.25), bottom: longNear(hz, H, W, (y) => y > H * 0.75),
+    left: longNear(vt, W, H, (x) => x < W * 0.25), right: longNear(vt, W, H, (x) => x > W * 0.75),
+  };
+  if (!blocked.top) hz.push({ p: [0, 0], q: [W, 0], pos: 0 });
+  if (!blocked.bottom) hz.push({ p: [0, H - 1], q: [W, H - 1], pos: H - 1 });
+  if (!blocked.left) vt.push({ p: [0, 0], q: [0, H], pos: 0 });
+  if (!blocked.right) vt.push({ p: [W - 1, 0], q: [W - 1, H], pos: W - 1 });
   // mỗi phía: tối đa 3 đường ngoài cùng, cách nhau đủ xa
   const pick = (arr, from, asc, lim) => {
     const r = [];
@@ -118,10 +132,11 @@ function houghQuads(cv, edges, W, H, out) {
   const T = pick(hz, H, true, H * 0.45), B = pick(hz, H, false, H * 0.55), L = pick(vt, W, true, W * 0.45), R = pick(vt, W, false, W * 0.55);
   for (const t of T) for (const b of B) for (const l of L) for (const r of R) {
     const q = [cross(t, l), cross(t, r), cross(b, r), cross(b, l)];
-    if (q.some((p) => !p || p[0] < -W * 0.05 || p[1] < -H * 0.05 || p[0] > W * 1.05 || p[1] > H * 1.05)) continue;
+    if (q.some((p) => !p || p[0] < -W * 0.02 || p[1] < -H * 0.02 || p[0] > W * 1.02 || p[1] > H * 1.02)) continue;
     const area = quadOk(q, W, H);
     if (area) out.push({ q, area, fill: 1 });
   }
+  return blocked;
 }
 function cross(a, b) {
   const d1 = [a.q[0] - a.p[0], a.q[1] - a.p[1]], d2 = [b.q[0] - b.p[0], b.q[1] - b.p[1]];
@@ -160,7 +175,9 @@ export function detectDocument(cv, c) {
   const src = cv.imread(canvas);
   const gray = new cv.Mat(), blur = new cv.Mat(), edges = new cv.Mat(), tmp = new cv.Mat();
   const k3 = cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(3, 3));
-  const found = [];
+  let found = [];
+  let blocked = {};
+  const raw = new cv.Mat(); // cạnh Canny gộp, chưa làm dày, cho Hough
   const support = new cv.Mat(); // bản đồ cạnh tổng hợp để kiểm tra 4 cạnh của từng ứng viên
   const paperMask = new cv.Mat(); // vùng sáng, ít màu (giấy)
   try {
@@ -170,13 +187,16 @@ export function detectDocument(cv, c) {
     const med = median(blur);
     for (const [lo, hi] of [[0.5 * med, 1.2 * med], [0.25 * med, 0.7 * med], [12, 36]]) {
       cv.Canny(blur, edges, Math.max(10, lo), Math.max(30, hi));
+      if (raw.empty()) edges.copyTo(raw); else cv.bitwise_or(raw, edges, raw);
       cv.dilate(edges, tmp, k3, new cv.Point(-1, -1), 2);
       if (support.empty()) tmp.copyTo(support); else cv.bitwise_or(support, tmp, support);
       quadsFrom(cv, tmp, W, H, found);
     }
     // (1b) Đường thẳng dài (Hough): tìm được mép giấy cả khi viền đứt quãng, nền trắng,
     // hoặc giấy có hoa văn dày làm đường bao bị dính vào bên trong
-    houghQuads(cv, edges, W, H, found);
+    // làm dày 1 lần: cạnh mảnh hơi nghiêng bị chia phiếu giữa các ô (ρ, θ) nên Hough bỏ sót
+    cv.dilate(raw, raw, k3);
+    blocked = houghQuads(cv, raw, W, H, found);
     // (2) Cạnh màu: giấy trắng trên nền sáng thường chỉ khác nhau về sắc độ
     const hsv = new cv.Mat(), ch = new cv.MatVector();
     cv.cvtColor(src, hsv, cv.COLOR_RGBA2RGB);
@@ -201,20 +221,55 @@ export function detectDocument(cv, c) {
     free(hsv, ch, sat, val, paper, k15);
     // Mỗi cạnh của trang thật phải nằm trên đường biên ảnh: đo tỉ lệ điểm trên cạnh trùng biên
     for (const f of found) {
-      const sides = [0, 1, 2, 3].map((i) => edgeSupport(support, f.q[i], f.q[(i + 1) % 4]));
+      // cạnh nằm trên mép ảnh: không có đường biên để đo, thay bằng tỉ lệ giấy chạm mép ảnh
+      f.border = 0;
+      const sides = [0, 1, 2, 3].map((i) => {
+        const a = f.q[i], b = f.q[(i + 1) % 4], e = onBorder(a, b, W, H);
+        if (e) { f.border++; if (blocked[e.side]) f.blocked = true; }
+        return e ? edgeSupport(paperMask, ...e) : edgeSupport(support, a, b);
+      });
       f.min = Math.min(...sides);
       f.mean = sides.reduce((a, b) => a + b, 0) / 4;
       f.out = paperOutside(cv, paperMask, f.q);
+      f.skew = skew(f.q);
     }
   } finally {
-    free(src, gray, blur, edges, tmp, k3, support, paperMask);
+    free(src, gray, blur, edges, tmp, k3, raw, support, paperMask);
   }
+  // bỏ khung tựa vào mép ảnh trong khi mép giấy thật ở phía đó đã thấy rõ
+  if (found.some((f) => !f.blocked)) found = found.filter((f) => !f.blocked);
   if (!found.length) return null;
   // khung cắt ngang tờ giấy thì ngay bên ngoài khung vẫn còn giấy → trừ điểm mạnh
-  const score = (f) => f.area * Math.min(1, f.fill + 0.15) * (0.25 + f.mean) * (f.min >= 0.45 ? 1 : 0.3) * Math.max(0.05, 1 - 2.5 * f.out);
-  found.sort((a, b) => score(b) - score(a));
-  const best = found[0];
+  // hai cạnh đối diện lệch nhau quá 10° → phối cảnh vô lý (thường do bắt nhầm bóng đổ) → trừ điểm
+  const score = (f) => f.area * Math.min(1, f.fill + 0.15) * (0.25 + f.mean) * (f.min >= 0.45 ? 1 : 0.3) * Math.max(0.05, 1 - 2.5 * f.out) * Math.max(0.05, 1 - Math.max(0, f.skew - 10) / 12);
+  for (const f of found) f.score = score(f);
+  found.sort((a, b) => b.score - a.score);
+  let best = found[0];
+  // khung dùng mép ảnh chỉ thắng khi không có khung nào khớp đủ 4 đường biên thật:
+  // nền trắng cũng "giống giấy" nên dễ bị nhận nhầm là giấy tràn ra ngoài
+  if (best.border) {
+    const real = found.find((f) => !f.border && f.min >= 0.45);
+    if (real && real.score >= best.score * 0.4) best = real;
+  }
   return { quad: best.q.map(([x, y]) => [x / S, y / S]), sure: best.min >= 0.45 };
+}
+
+/** Cạnh a→b nằm sát một mép ảnh? Trả về đoạn lùi vào trong 3 điểm ảnh để đo, hoặc null. */
+function onBorder(a, b, W, H) {
+  const tx = W * 0.015, ty = H * 0.015, d = 3;
+  const r = (side, p, q) => Object.assign([p, q], { side });
+  if (a[1] < ty && b[1] < ty) return r('top', [a[0], d], [b[0], d]);
+  if (a[1] > H - 1 - ty && b[1] > H - 1 - ty) return r('bottom', [a[0], H - 1 - d], [b[0], H - 1 - d]);
+  if (a[0] < tx && b[0] < tx) return r('left', [d, a[1]], [d, b[1]]);
+  if (a[0] > W - 1 - tx && b[0] > W - 1 - tx) return r('right', [W - 1 - d, a[1]], [W - 1 - d, b[1]]);
+  return null;
+}
+
+/** Độ lệch góc (độ) lớn nhất giữa hai cặp cạnh đối diện. */
+function skew(q) {
+  const ang = (a, b) => Math.atan2(b[1] - a[1], b[0] - a[0]);
+  const diff = (x, y) => { let d = Math.abs(x - y) % Math.PI; if (d > Math.PI / 2) d = Math.PI - d; return (d * 180) / Math.PI; };
+  return Math.max(diff(ang(q[0], q[1]), ang(q[3], q[2])), diff(ang(q[0], q[3]), ang(q[1], q[2])));
 }
 
 /** Tỉ lệ điểm "giấy" trong dải hẹp ngay bên ngoài tứ giác. */
