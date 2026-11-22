@@ -1,7 +1,7 @@
 // Giới thiệu: cách hoạt động, quyền riêng tư, lưu ý, mã nguồn mở và thư viện sử dụng.
 import { h } from '../core/ui.js';
 import { icon } from '../core/icons.js';
-import { VERSION } from '../main.js';
+import { VERSION, AUTHOR } from '../main.js';
 
 const REPO = 'https://github.com/tekatoji4u/beacondesk';
 const LIBS = [
@@ -14,6 +14,7 @@ export function render() {
   return h('div', null,
     h('section', { class: 'card' },
       h('h2', null, `BeaconDesk ${VERSION}`),
+      h('p', { class: 'credit', style: 'margin:-4px 0 8px' }, 'Powered by ', h('b', null, AUTHOR)),
       h('p', { class: 'sub' }, 'Bộ công cụ văn phòng chạy hoàn toàn trong trình duyệt: xử lý PDF, nhận dạng chữ tiếng Việt, soạn và kiểm tra văn bản hành chính theo Nghị định 30/2020/NĐ-CP, tạo PowerPoint, tóm tắt, chuẩn bị bản in A4. Miễn phí, mã nguồn mở.'),
       h('ul', { class: 'feat' },
         li('shield', 'Tài liệu không rời khỏi máy', 'Mọi xử lý diễn ra trên thiết bị. Không có máy chủ nhận tệp, không quảng cáo, không theo dõi.'),

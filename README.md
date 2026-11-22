@@ -1,5 +1,7 @@
 # BeaconDesk
 
+_Powered by **Hải Đăng**_
+
 Bộ công cụ văn phòng chạy hoàn toàn trong trình duyệt, dùng được trên máy tính, điện thoại và máy tính bảng, có mạng hay mất mạng đều được. Tài liệu không rời khỏi thiết bị: không có máy chủ nhận tệp, không quảng cáo, không theo dõi.
 
 ## Chức năng

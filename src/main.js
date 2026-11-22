@@ -8,6 +8,7 @@ import LOGO from '../public/icons/icon.svg?url';
 
 export const APP = 'BeaconDesk';
 export const VERSION = __APP_VERSION__;
+export const AUTHOR = 'Hải Đăng';
 
 /** Danh mục chức năng: mỗi mục tải mã khi được mở (lazy). */
 export const TOOLS = [
@@ -63,7 +64,7 @@ function shell() {
   const ws = h('div', { class: 'workspace' }, sidebar, scrim, main);
   const footer = h('footer', { class: 'footer' },
     h('span', null, `${APP} v${VERSION} · ${__SINGLE__ ? 'Bản một tệp (ngoại tuyến)' : 'Ứng dụng web cài được'} · Tài liệu được xử lý ngay trên thiết bị`),
-    h('a', { href: '#/about' }, 'Giới thiệu & góp ý'));
+    h('span', { class: 'footer-end' }, h('span', { class: 'credit' }, 'Powered by ', h('b', null, AUTHOR)), h('a', { href: '#/about' }, 'Giới thiệu & góp ý')));
 
   app.replaceChildren(h('div', { class: 'wrap' }, header, hero, ws, footer));
 
