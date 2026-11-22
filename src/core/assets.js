@@ -18,6 +18,7 @@ async function webAsset(key) {
     case 'ocrWorker': return new URL('ocr/worker.min.js', base).href;
     case 'ocrCoreDir': return new URL('ocr/', base).href;
     case 'ocrLang': return new URL('ocr/vie.traineddata.gz', base).href;
+    case 'opencv': return new URL('cv/opencv.js', base).href;
     default: throw new Error('Thiếu tài nguyên: ' + key);
   }
 }

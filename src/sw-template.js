@@ -69,7 +69,7 @@ self.addEventListener('fetch', (e) => {
   }
 
   if (req.method !== 'GET' || url.origin !== self.location.origin) return;
-  // Bản một tệp HTML (~13 MB) để tải về: không lưu vào bộ nhớ đệm.
+  // Bản một tệp HTML (~24 MB) để tải về: không lưu vào bộ nhớ đệm.
   if (url.pathname.includes('/download/')) return;
 
   // Điều hướng trang: ưu tiên mạng (lấy bản mới), mất mạng thì dùng bản đã lưu.
@@ -85,8 +85,8 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Tệp OCR: lấy từ cache, chưa có thì tải và lưu lại.
-  if (url.pathname.includes('/ocr/') || url.pathname.includes('heic2any')) {
+  // Tệp OCR, OpenCV: lấy từ cache, chưa có thì tải và lưu lại.
+  if (url.pathname.includes('/ocr/') || url.pathname.includes('/cv/') || url.pathname.includes('heic2any')) {
     e.respondWith((async () => {
       const c = await caches.open(OCR_CACHE);
       const hit = await c.match(req, { ignoreSearch: true, ignoreVary: true });

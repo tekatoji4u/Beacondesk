@@ -6,7 +6,7 @@ import { VERSION } from '../main.js';
 const REPO = 'https://github.com/tekatoji4u/beacondesk';
 const LIBS = [
   ['pdf-lib', 'MIT'], ['PDF.js (Mozilla)', 'Apache-2.0'], ['Tesseract.js', 'Apache-2.0'], ['docx', 'MIT'],
-  ['mammoth', 'BSD-2-Clause'], ['JSZip', 'MIT'], ['heic2any', 'MIT'], ['Phông DejaVu', 'Bitstream Vera / miễn phí'],
+  ['mammoth', 'BSD-2-Clause'], ['OpenCV.js', 'Apache-2.0'], ['JSZip', 'MIT'], ['heic2any', 'MIT'], ['Phông DejaVu', 'Bitstream Vera / miễn phí'],
 ];
 const li = (ic, title, text) => h('li', null, h('span', { html: icon(ic), style: 'display:contents' }), h('div', null, h('b', null, title), h('span', null, text)));
 

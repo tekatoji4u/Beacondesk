@@ -74,13 +74,14 @@ export async function ocrCoreFile() {
 }
 
 export async function offlineStatus() {
-  if (!('caches' in self)) return { ready: false, ocr: false };
+  if (!('caches' in self)) return { ready: false, ocr: false, cv: false };
   const keys = await caches.keys();
-  let ocr = false, core = false;
+  let ocr = false, core = false, cv = false;
   for (const k of keys) {
     const c = await caches.open(k);
     if (await c.match(new URL('ocr/vie.traineddata.gz', document.baseURI).href)) ocr = true;
+    if (await c.match(new URL('cv/opencv.js', document.baseURI).href)) cv = true;
     if ((await c.keys()).length > 5) core = true;
   }
-  return { ready: core, ocr };
+  return { ready: core, ocr, cv };
 }

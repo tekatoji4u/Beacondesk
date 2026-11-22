@@ -139,36 +139,3 @@ export function rotateCanvas(c, deg) {
   g.translate(w / 2, hh / 2); g.rotate(a); g.drawImage(c, -c.width / 2, -c.height / 2);
   return o;
 }
-
-/** Làm phẳng ánh sáng (khử bóng đổ, nền ố): chia mỗi điểm cho độ sáng nền ước lượng. */
-export function flattenLight(c) {
-  const w = c.width, h = c.height;
-  const sw = Math.max(8, Math.round(w / 28)), sh = Math.max(8, Math.round(h / 28));
-  const small = document.createElement('canvas');
-  small.width = sw; small.height = sh;
-  const sg = small.getContext('2d', { willReadFrequently: true });
-  sg.imageSmoothingQuality = 'high';
-  sg.drawImage(c, 0, 0, sw, sh);
-  // lấy độ sáng lớn nhất trong lân cận 3×3 để nền không bị chữ kéo tối
-  const sd = sg.getImageData(0, 0, sw, sh);
-  const src = grayArray(small), mx = new Uint8ClampedArray(src.length);
-  for (let y = 0; y < sh; y++) for (let x = 0; x < sw; x++) {
-    let m = 0;
-    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
-      const xx = Math.min(sw - 1, Math.max(0, x + dx)), yy = Math.min(sh - 1, Math.max(0, y + dy));
-      m = Math.max(m, src[yy * sw + xx]);
-    }
-    mx[y * sw + x] = m;
-  }
-  for (let i = 0, j = 0; j < mx.length; i += 4, j++) { sd.data[i] = sd.data[i + 1] = sd.data[i + 2] = mx[j]; sd.data[i + 3] = 255; }
-  sg.putImageData(sd, 0, 0);
-  const bgc = document.createElement('canvas');
-  bgc.width = w; bgc.height = h;
-  const bg2 = bgc.getContext('2d', { willReadFrequently: true });
-  bg2.imageSmoothingQuality = 'high';
-  bg2.drawImage(small, 0, 0, w, h);
-  const bg = grayArray(bgc), g = grayArray(c);
-  for (let i = 0; i < g.length; i++) g[i] = Math.min(255, (g[i] / Math.max(40, bg[i])) * 250);
-  bgc.width = bgc.height = 0;
-  return g;
-}

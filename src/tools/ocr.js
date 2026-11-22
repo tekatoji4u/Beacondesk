@@ -5,7 +5,7 @@ import { h, dropzone, progress, status, run, button, fmtSize, field, input, sele
 import { icon } from '../core/icons.js';
 import { openPdfjs, renderPage, canvasToBlob, PDFDocument, savePdf, embedVnFonts } from '../core/pdf.js';
 import { loadBitmap, toCanvas, grayArray, putGray, autoContrast, adaptiveBinarize, detectSkew, rotateCanvas } from '../core/image.js';
-import { getOcr, recognize, stopOcr } from '../core/ocr.js';
+import { getOcr, recognize, stopOcr, fixOrientation, drawOcrText } from '../core/ocr.js';
 import { linesToBlocks, blocksToText, fromPlain } from '../core/text.js';
 import { showResult } from '../core/result.js';
 
@@ -216,34 +216,6 @@ function enhance(c, mode) {
   return putGray(o, g);
 }
 
-/** Thử 4 hướng trên ảnh thu nhỏ, chọn hướng có độ tin cậy cao nhất. */
-async function fixOrientation(c) {
-  const S = Math.min(1, 1400 / Math.max(c.width, c.height));
-  const small = document.createElement('canvas');
-  small.width = Math.round(c.width * S); small.height = Math.round(c.height * S);
-  small.getContext('2d').drawImage(c, 0, 0, small.width, small.height);
-  const score = async (deg) => {
-    const r = await recognize(enhance(rot90(small, deg), 'contrast'));
-    const words = r.lines.flatMap((l) => l.words).filter((w) => w.t.length > 1);
-    return words.length ? (r.conf * Math.min(1, words.length / 20)) : 0;
-  };
-  const s0 = await score(0);
-  if (s0 > 70) return c; // đã đúng chiều: bỏ qua cho nhanh
-  let best = 0, bs = s0;
-  for (const d of [90, 180, 270]) { const s = await score(d); if (s > bs + 8) { bs = s; best = d; } }
-  small.width = small.height = 0;
-  return best ? rot90(c, best) : c;
-}
-function rot90(c, deg) {
-  if (!deg) return c;
-  const o = document.createElement('canvas');
-  const swap = deg === 90 || deg === 270;
-  o.width = swap ? c.height : c.width; o.height = swap ? c.width : c.height;
-  const g = o.getContext('2d');
-  g.translate(o.width / 2, o.height / 2); g.rotate((deg * Math.PI) / 180); g.drawImage(c, -c.width / 2, -c.height / 2);
-  return o;
-}
-
 /** Văn bản của một trang: gom dòng thành đoạn (giống PDF sang Word). */
 function toText(r) {
   if (!r.lines.length) return r.text.trim();
@@ -260,17 +232,7 @@ async function searchablePdf(results) {
     const page = doc.addPage([pw, ph]);
     const img = await doc.embedJpg(await r.jpg.arrayBuffer());
     page.drawImage(img, { x: 0, y: 0, width: pw, height: ph });
-    for (const l of r.lines) for (const w of l.words) {
-      const t = safeText(font, w.t);
-      if (!t) continue;
-      const bw = (w.x1 - w.x0) / k, lh = l.s / k;
-      const unit = font.widthOfTextAtSize(t, 1) || 1;
-      const size = Math.max(1, Math.min(lh * 1.5, bw / unit));
-      page.drawText(t, { x: w.x0 / k, y: ph - l.y / k, size, font, opacity: 0 });
-    }
+    drawOcrText(page, font, r.lines, { s: 1 / k, h: r.h });
   }
   return savePdf(doc);
-}
-function safeText(font, t) {
-  try { font.encodeText(t); return t; } catch { return [...t].filter((ch) => { try { font.encodeText(ch); return true; } catch { return false; } }).join(''); }
 }

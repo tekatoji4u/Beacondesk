@@ -1,6 +1,7 @@
 // Bộ nhận dạng chữ (Tesseract, tiếng Việt) chạy hoàn toàn trên máy.
 // Bản web: tệp OCR nằm ở ocr/ (service worker lưu lại). Bản một tệp: nhúng sẵn.
 import { getAsset } from './assets.js';
+import { grayArray, putGray, autoContrast } from './image.js';
 
 let poolP = null;
 
@@ -74,4 +75,51 @@ function cleanLine(s) {
     .replace(/([(\[“])\s+/g, '$1')
     .replace(/\s{2,}/g, ' ')
     .trim();
+}
+
+/** Thử 4 hướng trên ảnh thu nhỏ, chọn hướng có độ tin cậy cao nhất. Trả về canvas đã xoay. */
+export async function fixOrientation(c) {
+  const S = Math.min(1, 1400 / Math.max(c.width, c.height));
+  const small = document.createElement('canvas');
+  small.width = Math.round(c.width * S); small.height = Math.round(c.height * S);
+  small.getContext('2d', { willReadFrequently: true }).drawImage(c, 0, 0, small.width, small.height);
+  putGray(small, autoContrast(grayArray(small)));
+  const score = async (deg) => {
+    const r = await recognize(rot90(small, deg));
+    const words = r.lines.flatMap((l) => l.words).filter((w) => w.t.length > 1);
+    return words.length ? (r.conf * Math.min(1, words.length / 20)) : 0;
+  };
+  const s0 = await score(0);
+  if (s0 > 70) return c; // đã đúng chiều: bỏ qua cho nhanh
+  let best = 0, bs = s0;
+  for (const d of [90, 180, 270]) { const s = await score(d); if (s > bs + 8) { bs = s; best = d; } }
+  small.width = small.height = 0;
+  return best ? rot90(c, best) : c;
+}
+export function rot90(c, deg) {
+  if (!deg) return c;
+  const o = document.createElement('canvas');
+  const swap = deg === 90 || deg === 270;
+  o.width = swap ? c.height : c.width; o.height = swap ? c.width : c.height;
+  const g = o.getContext('2d');
+  g.translate(o.width / 2, o.height / 2); g.rotate((deg * Math.PI) / 180); g.drawImage(c, -c.width / 2, -c.height / 2);
+  return o;
+}
+
+/**
+ * Vẽ lớp chữ ẩn (tìm kiếm, bôi đen, copy được) lên trang PDF.
+ * Ảnh rộng h điểm ảnh được đặt tại (x, y) với tỉ lệ s (pt / điểm ảnh).
+ */
+export function drawOcrText(page, font, lines, { x = 0, y = 0, s, h }) {
+  for (const l of lines) for (const w of l.words) {
+    const t = safeText(font, w.t);
+    if (!t) continue;
+    const bw = (w.x1 - w.x0) * s, lh = l.s * s;
+    const unit = font.widthOfTextAtSize(t, 1) || 1;
+    const size = Math.max(1, Math.min(lh * 1.5, bw / unit));
+    page.drawText(t, { x: x + w.x0 * s, y: y + (h - l.y) * s, size, font, opacity: 0 });
+  }
+}
+function safeText(font, t) {
+  try { font.encodeText(t); return t; } catch { return [...t].filter((ch) => { try { font.encodeText(ch); return true; } catch { return false; } }).join(''); }
 }

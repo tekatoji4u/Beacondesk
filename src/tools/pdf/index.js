@@ -12,7 +12,7 @@ export const PDF_TOOLS = [
     ['rotate', 'Xoay trang', 'rotate', 'teal', () => import('./basic.js').then((m) => m.rotate())],
     ['delete', 'Xoá trang', 'trash', 'red', () => import('./basic.js').then((m) => m.remove())],
     ['compress', 'Nén dung lượng', 'shrink', 'green', () => import('./compress.js').then((m) => m.compress())],
-    ['img2pdf', 'Ảnh sang PDF', 'image', 'amber', () => import('./images.js').then((m) => m.img2pdf())],
+    ['img2pdf', 'Ảnh sang PDF', 'image', 'amber', () => import('../scan.js').then((m) => m.scanner({ title: 'Ảnh sang PDF', sub: 'Ảnh chụp tài liệu được tự tìm khung, nắn phẳng, khử bóng và làm rõ như bản scan. Ảnh thường (không phải tài liệu): chọn "Không cắt" và chế độ "Ảnh gốc".' }))],
     ['pdf2img', 'PDF sang ảnh', 'image', 'orange', () => import('./images.js').then((m) => m.pdf2img())],
   ]],
   ['Chỉnh sửa & ghi chú', [

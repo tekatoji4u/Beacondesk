@@ -26,7 +26,8 @@ function offlineCard() {
     const s = await offlineStatus();
     state.replaceChildren(h('div', { class: 'score' },
       h('div', null, h('b', { style: `color:var(--${s.ready ? 'ok' : 'warn'})` }, s.ready ? 'Sẵn sàng' : 'Chưa đủ'), h('span', null, 'Giao diện và công cụ PDF, Word')),
-      h('div', null, h('b', { style: `color:var(--${s.ocr ? 'ok' : 'warn'})` }, s.ocr ? 'Sẵn sàng' : 'Chưa tải'), h('span', null, 'Nhận dạng chữ (OCR) tiếng Việt'))));
+      h('div', null, h('b', { style: `color:var(--${s.ocr ? 'ok' : 'warn'})` }, s.ocr ? 'Sẵn sàng' : 'Chưa tải'), h('span', null, 'Nhận dạng chữ (OCR) tiếng Việt')),
+      h('div', null, h('b', { style: `color:var(--${s.cv ? 'ok' : 'warn'})` }, s.cv ? 'Sẵn sàng' : 'Chưa tải'), h('span', null, 'Xử lý ảnh scan (OpenCV)'))));
   };
   paint();
   // Bản một tệp HTML chỉ có trên trang đã đăng (GitHub Pages, xem .github/workflows/pages.yml)
@@ -42,7 +43,7 @@ function offlineCard() {
   }));
   return h('section', { class: 'card' },
     h('h2', null, 'Dùng khi mất mạng'),
-    h('p', { class: 'sub' }, 'Giao diện và công cụ PDF, Word được lưu tự động sau lần mở đầu tiên. Bộ nhận dạng chữ (khoảng 6 MB) chỉ tải khi dùng lần đầu, hoặc tải trước tại đây để dùng khi không có mạng. Bản một tệp HTML chạy được cả khi mở thẳng từ máy, không cần cài.'),
+    h('p', { class: 'sub' }, 'Giao diện và công cụ PDF, Word được lưu tự động sau lần mở đầu tiên. Bộ nhận dạng chữ (khoảng 6 MB) và bộ xử lý ảnh scan (khoảng 11 MB) chỉ tải khi dùng lần đầu, hoặc tải trước tại đây để dùng khi không có mạng. Bản một tệp HTML chạy được cả khi mở thẳng từ máy, không cần cài.'),
     state, h('div', { class: 'row mt' }, go, single), pr.el, st.el);
 }
 

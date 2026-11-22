@@ -1,6 +1,6 @@
 // Hàm dùng chung cho PDF: mở tệp (pdf-lib, pdf.js), vẽ trang, phông tiếng Việt,
 // và đặt nội dung đúng vị trí kể cả khi trang bị xoay (/Rotate) hoặc có CropBox.
-import { PDFDocument, degrees, rgb } from 'pdf-lib';
+import { PDFDocument, degrees, rgb, pushGraphicsState, popGraphicsState, concatTransformationMatrix, drawObject } from 'pdf-lib';
 import { getAsset } from './assets.js';
 
 export { PDFDocument, degrees, rgb };
@@ -117,3 +117,19 @@ export function hexToRgb(hex) {
   return m ? rgb(parseInt(m[1], 16) / 255, parseInt(m[2], 16) / 255, parseInt(m[3], 16) / 255) : rgb(0, 0, 0);
 }
 export const MM = 72 / 25.4;
+
+/**
+ * Vẽ ảnh đen trắng (canvas chỉ có 0/255) lên trang dưới dạng ảnh 1 bit nén Flate:
+ * nhẹ hơn JPEG nhiều lần và nét chữ không bị nhoè.
+ */
+export function drawBwImage(doc, page, c, { x, y, width, height }) {
+  const W = c.width, H = c.height, rowBytes = (W + 7) >> 3;
+  const px = c.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, W, H).data;
+  const bits = new Uint8Array(rowBytes * H);
+  for (let yy = 0; yy < H; yy++) {
+    for (let xx = 0; xx < W; xx++) if (px[(yy * W + xx) * 4] > 127) bits[yy * rowBytes + (xx >> 3)] |= 0x80 >> (xx & 7);
+  }
+  const ref = doc.context.register(doc.context.flateStream(bits, { Type: 'XObject', Subtype: 'Image', Width: W, Height: H, ColorSpace: 'DeviceGray', BitsPerComponent: 1 }));
+  const name = page.node.newXObject('Bw', ref);
+  page.pushOperators(pushGraphicsState(), concatTransformationMatrix(width, 0, 0, height, x, y), drawObject(name), popGraphicsState());
+}

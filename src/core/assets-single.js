@@ -5,6 +5,7 @@ import fontItalic from '../../public/fonts/DejaVuSerif-Italic.ttf?inline';
 import ocrWorker from '../../public/ocr/worker.min.js?raw';
 import ocrCore from '../../public/ocr/tesseract-core-lstm.wasm.js?raw';
 import ocrLang from '../../public/ocr/vie.traineddata.gz?inline';
+import opencv from '../../public/cv/opencv.js?raw';
 
 const urls = new Map();
 const fromText = (t, type) => URL.createObjectURL(new Blob([t], { type }));
@@ -27,6 +28,7 @@ export function blobUrl(key) {
     // nên ghép sẵn lõi Tesseract (định nghĩa TesseractCore, worker sẽ bỏ qua bước tải lõi)
     // và chuyển yêu cầu tải dữ liệu tiếng Việt sang data: URL nhúng trong chính worker.
     case 'ocrWorker': u = fromText(ocrCore + `;\nself.TesseractCore=TesseractCore;self.__bdLang=${JSON.stringify(ocrLang)};const __bdF=self.fetch.bind(self);self.fetch=(r,o)=>/vie\\.traineddata/.test(String(r))?__bdF(self.__bdLang):__bdF(r,o);\n` + ocrWorker, 'text/javascript'); break;
+    case 'opencv': u = fromText(opencv, 'text/javascript'); break;
     default: throw new Error('Thiếu tài nguyên: ' + key);
   }
   urls.set(key, u);
