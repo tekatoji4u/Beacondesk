@@ -15,7 +15,7 @@ export async function loadPdf(file, { ignoreEncryption = false } = {}) {
   }
 }
 export async function savePdf(doc) {
-  doc.setProducer('BeaconDesk');
+  doc.setProducer('BeaconDesk – Powered by Hải Đăng');
   doc.setModificationDate(new Date());
   const bytes = await doc.save({ useObjectStreams: true });
   return new Blob([bytes], { type: 'application/pdf' });

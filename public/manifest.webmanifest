@@ -1,7 +1,7 @@
 {
   "name": "BeaconDesk – Bộ công cụ văn phòng",
   "short_name": "BeaconDesk",
-  "description": "Xử lý PDF, nhận dạng chữ tiếng Việt, soạn và kiểm tra văn bản hành chính ngay trên thiết bị. Dùng được cả khi mất mạng.",
+  "description": "Xử lý PDF, nhận dạng chữ tiếng Việt, soạn và kiểm tra văn bản hành chính ngay trên thiết bị. Dùng được cả khi mất mạng. Powered by Hải Đăng.",
   "lang": "vi",
   "id": "./",
   "start_url": "./",

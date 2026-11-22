@@ -10,6 +10,7 @@
     "build:all": "npm run build && npm run build:single",
     "preview": "vite preview"
   },
+  "author": "Hải Đăng",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tekatoji4u/beacondesk.git"
