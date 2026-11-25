@@ -39,15 +39,32 @@ const theme = {
 };
 theme.set(theme.get());
 
+/** Kiểu giao diện: chỉ đổi CSS (thuộc tính data-skin), không đụng tới công cụ nên mọi tính năng giữ nguyên. */
+const skin = {
+  get: () => document.documentElement.dataset.skin || 'nova',
+  set(s) {
+    const apply = () => {
+      if (s === 'classic') document.documentElement.dataset.skin = 'classic';
+      else delete document.documentElement.dataset.skin;
+      try { localStorage.setItem('bd-skin', s); } catch { /* bỏ qua */ }
+    };
+    // Chuyển mượt bằng View Transitions khi trình duyệt hỗ trợ; nếu không thì đổi ngay.
+    if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.startViewTransition(apply);
+    else apply();
+  },
+};
+
 function shell() {
   const logo = h('img', { class: 'logo', src: LOGO, alt: '' });
   const net = h('span', { class: 'net-badge', title: 'Trạng thái kết nối' }, h('i'), h('span'));
   const installBtn = h('button', { type: 'button', class: 'btn btn-sm btn-primary', hidden: true, title: 'Cài ứng dụng', 'aria-label': 'Cài ứng dụng' }, h('span', { html: icon('installs'), style: 'display:contents' }), h('span', { class: 'btn-text' }, 'Cài ứng dụng'));
   const themeBtn = h('button', { type: 'button', class: 'theme-switch', 'aria-label': 'Đổi giao diện sáng / tối', onclick: () => theme.set(theme.get() === 'dark' ? 'light' : 'dark') },
     h('span', { html: icon('moon', 'moon'), style: 'display:contents' }), h('span', { html: icon('sun', 'sun'), style: 'display:contents' }), h('span', { class: 'knob' }));
+  const skinBtn = h('button', { type: 'button', class: 'icon-btn skin-btn', title: 'Chuyển kiểu giao diện', 'aria-label': 'Chuyển kiểu giao diện', onclick: () => skin.set(skin.get() === 'classic' ? 'nova' : 'classic') },
+    h('span', { html: icon('palette'), style: 'display:contents' }));
   const header = h('header', { class: 'header' },
     h('a', { class: 'brand', href: '#/home' }, logo, h('div', null, h('strong', null, 'Beacon', h('span', null, 'Desk')), h('small', null, `Bộ công cụ văn phòng · v${VERSION}`))),
-    h('div', { class: 'header-actions' }, installBtn, net, themeBtn));
+    h('div', { class: 'header-actions' }, installBtn, net, skinBtn, themeBtn));
 
   const hero = h('section', { class: 'hero' }, h('div', { class: 'pill' }), h('h1'), h('p'));
 

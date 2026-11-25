@@ -441,3 +441,6 @@ dialog.sheet .sb { padding: 4px 20px 20px; overflow-y: auto; max-height: calc(86
   .brand .logo { width: 36px; height: 36px; border-radius: 10px; }
   .brand strong { font-size: 17px; }
 }
+
+/* ---------- Chuyển kiểu giao diện (nút bảng màu trên đầu trang) ---------- */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; animation-timing-function: ease; }
