@@ -441,3 +441,129 @@ dialog.sheet .sb { padding: 4px 20px 20px; overflow-y: auto; max-height: calc(86
   .brand .logo { width: 36px; height: 36px; border-radius: 10px; }
   .brand strong { font-size: 17px; }
 }
+
+/* ---------- Chuyển kiểu giao diện (nút bảng màu trên đầu trang) ---------- */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; animation-timing-function: ease; }
+.nav-profile, .dock { display: none; }
+@media print { .dock { display: none !important; } }
+
+/* =========================================================
+   Kiểu "Clay": nền tím hồng nhạt, sidebar tím bo tròn có lời chào,
+   thẻ nổi mềm kiểu đất sét, thanh điều hướng viên thuốc ở cuối màn hình.
+   Chỉ đổi phần trình bày; mọi công cụ dùng chung mã với kiểu Nova.
+   ========================================================= */
+:root[data-skin="clay"] {
+  --bg: #f3edfd;
+  --card: rgba(255, 255, 255, .82);
+  --card-2: #f7f2ff;
+  --ink: #2b2350;
+  --muted: #7b72a0;
+  --line: #e6dcf8;
+  --blue: #7c5ce0;
+  --blue-2: #9b7bf2;
+  --red: #e0518a;
+  --info: #6a4fd0;
+  --info-soft: #efe9ff;
+  --focus: rgba(124, 92, 224, .4);
+  --radius: 24px;
+  --clay: 0 20px 38px -20px rgba(102, 72, 190, .42), 0 2px 6px rgba(102, 72, 190, .06), inset 0 1px 0 rgba(255, 255, 255, .95), inset 0 -3px 0 rgba(124, 92, 224, .06);
+  --shadow-card: var(--clay);
+  --side-1: #ab95f6;
+  --side-2: #7c60dd;
+  --side-ink: #fff;
+  --hero-bg: linear-gradient(120deg, #d6c9fd, #bba5f8 52%, #efc9ef);
+  --hero-ink: #2b2350;
+  --hero-sub: #4d4377;
+  --page-bg: radial-gradient(1200px 600px at 0% 0%, #e9e0ff, transparent 60%), radial-gradient(900px 600px at 100% 100%, #ffe3ec, transparent 60%), linear-gradient(135deg, #f1ebff, #fbeff5);
+}
+:root[data-skin="clay"][data-theme="dark"] {
+  --bg: #17122b;
+  --card: rgba(40, 32, 72, .82);
+  --card-2: #221a40;
+  --ink: #f1ecff;
+  --muted: #b5aad8;
+  --line: #3a2f62;
+  --blue: #a88cff;
+  --blue-2: #c4b0ff;
+  --red: #ff7fae;
+  --info: #c4b0ff;
+  --info-soft: #2a2050;
+  --focus: rgba(168, 140, 255, .5);
+  --clay: 0 20px 40px -20px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .08), inset 0 -3px 0 rgba(0, 0, 0, .18);
+  --side-1: #5d47bb;
+  --side-2: #3a2a86;
+  --hero-bg: linear-gradient(120deg, #3f3388, #5b3f9e 55%, #7a3d82);
+  --hero-ink: #fff;
+  --hero-sub: #ddd3ff;
+  --page-bg: radial-gradient(1200px 600px at 0% 0%, #2a1f55, transparent 60%), radial-gradient(900px 600px at 100% 100%, #3a1a3a, transparent 60%), linear-gradient(135deg, #17122b, #1e1430);
+}
+:root[data-skin="clay"] body { background: var(--page-bg) fixed; background-color: var(--bg); }
+[data-skin="clay"] .wrap { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+
+/* Đầu trang */
+[data-skin="clay"] .brand .logo { filter: drop-shadow(0 6px 10px rgba(124, 92, 224, .35)); }
+[data-skin="clay"] .brand strong span { color: var(--blue); }
+[data-skin="clay"] .net-badge, [data-skin="clay"] .icon-btn, [data-skin="clay"] .theme-switch { background: var(--card); border-color: var(--line); box-shadow: var(--clay); }
+[data-skin="clay"] .skin-btn { color: var(--blue); }
+
+/* Hero */
+[data-skin="clay"] .hero { background: var(--hero-bg); color: var(--hero-ink); border-radius: 28px; box-shadow: var(--clay), inset 0 -10px 30px rgba(124, 92, 224, .12); }
+[data-skin="clay"] .hero::after { background: radial-gradient(circle, rgba(255, 255, 255, .55), transparent 70%); }
+[data-skin="clay"] .hero .pill { display: inline-block; color: var(--blue); background: rgba(255, 255, 255, .75); padding: 5px 12px; border-radius: 999px; letter-spacing: 1px; box-shadow: 0 4px 10px -4px rgba(102, 72, 190, .35); }
+[data-skin="clay"][data-theme="dark"] .hero .pill { background: rgba(255, 255, 255, .14); color: #e2d8ff; }
+[data-skin="clay"] .hero p { color: var(--hero-sub); }
+
+/* Sidebar tím */
+[data-skin="clay"] .sidebar { background: linear-gradient(170deg, var(--side-1), var(--side-2)); color: var(--side-ink); border: 0; outline: 0; border-radius: 28px; box-shadow: 0 24px 44px -20px rgba(92, 62, 190, .6), inset 0 1px 0 rgba(255, 255, 255, .35); -webkit-backdrop-filter: none; backdrop-filter: none; }
+[data-skin="clay"] .nav-head strong, [data-skin="clay"] .nav-item { color: var(--side-ink); }
+[data-skin="clay"] .nav-hint { color: rgba(255, 255, 255, .75); }
+[data-skin="clay"] .nav-sep { background: rgba(255, 255, 255, .25); }
+[data-skin="clay"] .nav-toggle { background: rgba(255, 255, 255, .2); border-color: rgba(255, 255, 255, .35); color: #fff; box-shadow: none; }
+[data-skin="clay"] .nav-item { border-radius: 16px; }
+[data-skin="clay"] .nav-item:hover { background: rgba(255, 255, 255, .16); }
+[data-skin="clay"] .nav-item[aria-current="page"] { background: #fff; color: #5b3fc4; border-color: transparent; box-shadow: 0 10px 20px -10px rgba(40, 20, 110, .6); }
+[data-skin="clay"] .sidebar .ico { background: rgba(255, 255, 255, .18); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3); }
+[data-skin="clay"] .nav-item[aria-current="page"] .ico { background: linear-gradient(160deg, var(--c1), var(--c2)); box-shadow: 0 3px 8px -2px var(--c2); }
+[data-skin="clay"] .nav-collapsed .nav-item[aria-current="page"] { background: transparent; box-shadow: none; }
+[data-skin="clay"] .nav-collapsed .nav-item[aria-current="page"] .ico { box-shadow: 0 0 0 2px var(--side-2), 0 0 0 4px #fff; }
+[data-skin="clay"] .nav-profile { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px 0 12px; text-align: center; }
+.nav-profile .avatar { position: relative; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; font-weight: 800; font-size: 20px; color: #6a4fd0; background: linear-gradient(160deg, #fff, #ece4ff); box-shadow: 0 0 0 4px rgba(255, 255, 255, .45), 0 10px 20px -8px rgba(40, 20, 110, .55); }
+.nav-profile .avatar i { position: absolute; right: 2px; bottom: 4px; width: 13px; height: 13px; border-radius: 50%; background: #34d399; border: 2px solid #fff; }
+.nav-profile b { font-size: 14px; white-space: nowrap; }
+[data-skin="clay"] .nav-collapsed .nav-profile { padding: 4px 0 8px; }
+[data-skin="clay"] .nav-collapsed .nav-profile .avatar { width: 40px; height: 40px; font-size: 14px; }
+[data-skin="clay"] .nav-collapsed .nav-profile b { display: none; }
+
+/* Thẻ, nút */
+[data-skin="clay"] .card { border-color: rgba(255, 255, 255, .7); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+[data-skin="clay"][data-theme="dark"] .card { border-color: rgba(255, 255, 255, .06); }
+[data-skin="clay"] .home-card { border-radius: 22px; border-color: transparent; background: linear-gradient(160deg, var(--card), var(--card-2)); box-shadow: var(--clay); transition: transform .25s cubic-bezier(.3, 1.4, .5, 1), box-shadow .2s; }
+[data-skin="clay"] .home-card:hover { transform: translateY(-5px); }
+[data-skin="clay"] .btn { border-radius: 14px; }
+[data-skin="clay"] .btn-primary { background: linear-gradient(160deg, #a38bf7, #7656dc); border-color: transparent; box-shadow: 0 10px 20px -10px rgba(102, 72, 190, .7), inset 0 1px 0 rgba(255, 255, 255, .35); }
+[data-skin="clay"] .seg { border-radius: 16px; }
+[data-skin="clay"] .seg button { border-radius: 12px; }
+[data-skin="clay"] .drop { border-radius: 20px; }
+
+/* Thanh điều hướng viên thuốc */
+[data-skin="clay"] .dock {
+  display: flex; gap: 4px; position: fixed; z-index: 130; left: 50%; transform: translateX(-50%);
+  bottom: calc(14px + env(safe-area-inset-bottom)); max-width: calc(100vw - 24px); padding: 6px;
+  overflow-x: auto; scrollbar-width: none; border-radius: 999px;
+  background: linear-gradient(160deg, var(--side-1), var(--side-2));
+  box-shadow: 0 18px 36px -14px rgba(92, 62, 190, .7), inset 0 1px 0 rgba(255, 255, 255, .35);
+}
+[data-skin="clay"] .dock::-webkit-scrollbar { display: none; }
+.dock a { flex: none; display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; color: #fff; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; transition: background .2s, color .2s; }
+.dock a:hover { background: rgba(255, 255, 255, .16); }
+.dock a[aria-current="page"] { background: #fff; color: #5b3fc4; box-shadow: 0 6px 14px -6px rgba(40, 20, 110, .6); }
+.dock svg { width: 17px; height: 17px; flex: none; }
+@media (min-width: 761px) { .dock svg { display: none; } }
+@media (max-width: 760px) {
+  /* Trên điện thoại kiểu Clay dùng thanh viên thuốc thay cho thanh icon bên trái */
+  [data-skin="clay"] .wrap { padding-left: max(12px, env(safe-area-inset-left)); }
+  [data-skin="clay"] .sidebar, [data-skin="clay"] .nav-scrim { display: none !important; }
+  [data-skin="clay"] .dock { left: 12px; right: 12px; transform: none; max-width: none; }
+  .dock a { flex-direction: column; gap: 2px; padding: 7px 11px; font-size: 11px; border-radius: 22px; min-width: 62px; }
+}
+[data-skin="clay"] .hero > * { position: relative; z-index: 1; }
