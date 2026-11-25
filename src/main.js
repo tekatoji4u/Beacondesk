@@ -12,18 +12,18 @@ export const AUTHOR = 'Hải Đăng';
 
 /** Danh mục chức năng: mỗi mục tải mã khi được mở (lazy). */
 export const TOOLS = [
-  { id: 'home', label: 'Trang chủ', icon: 'home', tint: 'slate', pill: 'Bộ công cụ văn phòng · All-in-one', title: 'BeaconDesk — làm việc với tài liệu ngay trên máy.', lead: 'Xử lý PDF, nhận dạng chữ tiếng Việt, soạn và kiểm tra văn bản hành chính. Không tải tài liệu lên máy chủ, dùng được cả khi mất mạng.', load: () => import('./tools/home.js') },
-  { id: 'pdf', label: 'Công cụ PDF', icon: 'files', tint: 'blue', pill: 'PDF · 20 công cụ', title: 'Công cụ PDF', lead: 'Ghép, tách, sắp xếp trang bằng ảnh thu nhỏ, ký và đóng dấu, đánh số, nén dung lượng, chuyển sang Word/Excel.', desc: 'Ghép, tách, ký, nén, chuyển đổi PDF', load: () => import('./tools/pdf/index.js') },
-  { id: 'ocr', label: 'Scan / ảnh → chữ', icon: 'scan', tint: 'teal', pill: 'OCR tiếng Việt', title: 'Nhận dạng chữ từ ảnh và bản scan', lead: 'Chụp hoặc chọn ảnh, PDF scan; tự xoay, chỉnh nghiêng; xuất Word, văn bản hoặc PDF tìm kiếm được.', desc: 'OCR tiếng Việt → Word, PDF tìm kiếm được', load: () => import('./tools/ocr.js') },
-  { id: 'compose', label: 'Soạn văn bản', icon: 'pen', tint: 'indigo', pill: 'Nghị định 30/2020/NĐ-CP', title: 'Soạn văn bản hành chính', lead: 'Chọn loại văn bản, điền nội dung và xuất Word đúng thể thức. Thông tin cơ quan, người ký được nhớ cho lần sau.', desc: '8 loại văn bản, xuất Word đúng thể thức', load: () => import('./tools/compose.js') },
-  { id: 'check', label: 'Kiểm tra văn bản', icon: 'spell', tint: 'green', pill: 'Thể thức · Chính tả · Trình bày', title: 'Kiểm tra thể thức và chính tả', lead: 'Dò lỗi lề, phông, cỡ chữ, số trang theo Nghị định 30; lỗi chính tả, dấu câu và trình bày tiếng Việt.', desc: 'Dò lỗi thể thức, chính tả, trình bày', load: () => import('./tools/check.js') },
-  { id: 'rename', label: 'Đổi tên hàng loạt', icon: 'rename', tint: 'amber', pill: 'Tệp · Thư mục', title: 'Đổi tên tệp hàng loạt', lead: 'Đặt tên theo mẫu, tìm và thay, bỏ dấu, đánh số thứ tự; xem trước trước khi áp dụng.', desc: 'Đặt tên theo mẫu, bỏ dấu, đánh số', load: () => import('./tools/rename.js') },
-  { id: 'slides', label: 'Tạo PowerPoint', icon: 'slides', tint: 'orange', pill: 'Word/PDF → PowerPoint', title: 'Tạo bài trình chiếu', lead: 'Chuyển Word hoặc PDF thành bài PowerPoint chỉnh sửa được, chọn bảng màu và bố cục.', desc: 'Word/PDF thành bài trình chiếu', load: () => import('./tools/slides.js') },
-  { id: 'summary', label: 'Tóm tắt & dàn ý', icon: 'tree', tint: 'violet', pill: 'Tóm tắt · Từ khoá · Dàn ý', title: 'Tóm tắt và lập dàn ý', lead: 'Rút ý chính, từ khoá và dàn ý từ tài liệu dài ngay trên máy; có thể bật AI khi có mạng.', desc: 'Rút ý chính, từ khoá, dàn ý', load: () => import('./tools/summary.js') },
-  { id: 'print', label: 'In ấn PDF A4', icon: 'printer', tint: 'cyan', pill: 'Ảnh chụp · Word → PDF A4', title: 'Tạo PDF A4 sẵn sàng in', lead: 'Ảnh chụp tài liệu được nắn thẳng theo 4 góc, làm rõ chữ; Word/PDF được dàn lại khổ A4 với phông tiếng Việt.', desc: 'Nắn ảnh chụp, dàn trang A4', load: () => import('./tools/print.js') },
+  { id: 'home', label: 'Trang chủ', short: 'Trang chủ', icon: 'home', tint: 'slate', pill: 'Bộ công cụ văn phòng · All-in-one', title: 'BeaconDesk — làm việc với tài liệu ngay trên máy.', lead: 'Xử lý PDF, nhận dạng chữ tiếng Việt, soạn và kiểm tra văn bản hành chính. Không tải tài liệu lên máy chủ, dùng được cả khi mất mạng.', load: () => import('./tools/home.js') },
+  { id: 'pdf', label: 'Công cụ PDF', short: 'PDF', icon: 'files', tint: 'blue', pill: 'PDF · 20 công cụ', title: 'Công cụ PDF', lead: 'Ghép, tách, sắp xếp trang bằng ảnh thu nhỏ, ký và đóng dấu, đánh số, nén dung lượng, chuyển sang Word/Excel.', desc: 'Ghép, tách, ký, nén, chuyển đổi PDF', load: () => import('./tools/pdf/index.js') },
+  { id: 'ocr', label: 'Scan / ảnh → chữ', short: 'OCR', icon: 'scan', tint: 'teal', pill: 'OCR tiếng Việt', title: 'Nhận dạng chữ từ ảnh và bản scan', lead: 'Chụp hoặc chọn ảnh, PDF scan; tự xoay, chỉnh nghiêng; xuất Word, văn bản hoặc PDF tìm kiếm được.', desc: 'OCR tiếng Việt → Word, PDF tìm kiếm được', load: () => import('./tools/ocr.js') },
+  { id: 'compose', label: 'Soạn văn bản', short: 'Soạn', icon: 'pen', tint: 'indigo', pill: 'Nghị định 30/2020/NĐ-CP', title: 'Soạn văn bản hành chính', lead: 'Chọn loại văn bản, điền nội dung và xuất Word đúng thể thức. Thông tin cơ quan, người ký được nhớ cho lần sau.', desc: '8 loại văn bản, xuất Word đúng thể thức', load: () => import('./tools/compose.js') },
+  { id: 'check', label: 'Kiểm tra văn bản', short: 'Kiểm tra', icon: 'spell', tint: 'green', pill: 'Thể thức · Chính tả · Trình bày', title: 'Kiểm tra thể thức và chính tả', lead: 'Dò lỗi lề, phông, cỡ chữ, số trang theo Nghị định 30; lỗi chính tả, dấu câu và trình bày tiếng Việt.', desc: 'Dò lỗi thể thức, chính tả, trình bày', load: () => import('./tools/check.js') },
+  { id: 'rename', label: 'Đổi tên hàng loạt', short: 'Đổi tên', icon: 'rename', tint: 'amber', pill: 'Tệp · Thư mục', title: 'Đổi tên tệp hàng loạt', lead: 'Đặt tên theo mẫu, tìm và thay, bỏ dấu, đánh số thứ tự; xem trước trước khi áp dụng.', desc: 'Đặt tên theo mẫu, bỏ dấu, đánh số', load: () => import('./tools/rename.js') },
+  { id: 'slides', label: 'Tạo PowerPoint', short: 'PowerPoint', icon: 'slides', tint: 'orange', pill: 'Word/PDF → PowerPoint', title: 'Tạo bài trình chiếu', lead: 'Chuyển Word hoặc PDF thành bài PowerPoint chỉnh sửa được, chọn bảng màu và bố cục.', desc: 'Word/PDF thành bài trình chiếu', load: () => import('./tools/slides.js') },
+  { id: 'summary', label: 'Tóm tắt & dàn ý', short: 'Tóm tắt', icon: 'tree', tint: 'violet', pill: 'Tóm tắt · Từ khoá · Dàn ý', title: 'Tóm tắt và lập dàn ý', lead: 'Rút ý chính, từ khoá và dàn ý từ tài liệu dài ngay trên máy; có thể bật AI khi có mạng.', desc: 'Rút ý chính, từ khoá, dàn ý', load: () => import('./tools/summary.js') },
+  { id: 'print', label: 'In ấn PDF A4', short: 'In A4', icon: 'printer', tint: 'cyan', pill: 'Ảnh chụp · Word → PDF A4', title: 'Tạo PDF A4 sẵn sàng in', lead: 'Ảnh chụp tài liệu được nắn thẳng theo 4 góc, làm rõ chữ; Word/PDF được dàn lại khổ A4 với phông tiếng Việt.', desc: 'Nắn ảnh chụp, dàn trang A4', load: () => import('./tools/print.js') },
   { sep: true },
-  { id: 'settings', label: 'Cài đặt & AI', icon: 'settings', tint: 'pink', pill: 'Cài đặt', title: 'Cài đặt', lead: 'Gói ngoại tuyến, trợ lý AI tuỳ chọn, dữ liệu lưu trên máy.', load: () => import('./tools/settings.js') },
-  { id: 'about', label: 'Giới thiệu', icon: 'info', tint: 'slate', pill: 'Giới thiệu', title: 'Về BeaconDesk', lead: 'Cách hoạt động, quyền riêng tư và lưu ý khi sử dụng.', load: () => import('./tools/about.js') },
+  { id: 'settings', label: 'Cài đặt & AI', short: 'Cài đặt', icon: 'settings', tint: 'pink', pill: 'Cài đặt', title: 'Cài đặt', lead: 'Gói ngoại tuyến, trợ lý AI tuỳ chọn, dữ liệu lưu trên máy.', load: () => import('./tools/settings.js') },
+  { id: 'about', label: 'Giới thiệu', short: 'Giới thiệu', icon: 'info', tint: 'slate', pill: 'Giới thiệu', title: 'Về BeaconDesk', lead: 'Cách hoạt động, quyền riêng tư và lưu ý khi sử dụng.', load: () => import('./tools/about.js') },
 ];
 
 const app = document.getElementById('app');
@@ -34,9 +34,11 @@ const theme = {
   set(t) {
     document.documentElement.dataset.theme = t;
     try { localStorage.setItem('bd-theme', t); } catch { /* bỏ qua */ }
-    document.querySelector('meta[name=theme-color]')?.setAttribute('content', t === 'dark' ? '#0b1726' : '#005993');
+    paintBar();
   },
 };
+const paintBar = () => document.querySelector('meta[name=theme-color]')?.setAttribute('content',
+  document.documentElement.dataset.skin === 'clay' ? (theme.get() === 'dark' ? '#1a1430' : '#8b6fe6') : (theme.get() === 'dark' ? '#0b1726' : '#005993'));
 theme.set(theme.get());
 
 /** Kiểu giao diện: chỉ đổi CSS (thuộc tính data-skin), không đụng tới công cụ nên mọi tính năng giữ nguyên. */
@@ -44,9 +46,10 @@ const skin = {
   get: () => document.documentElement.dataset.skin || 'nova',
   set(s) {
     const apply = () => {
-      if (s === 'classic') document.documentElement.dataset.skin = 'classic';
+      if (s === 'clay') document.documentElement.dataset.skin = 'clay';
       else delete document.documentElement.dataset.skin;
       try { localStorage.setItem('bd-skin', s); } catch { /* bỏ qua */ }
+      paintBar();
     };
     // Chuyển mượt bằng View Transitions khi trình duyệt hỗ trợ; nếu không thì đổi ngay.
     if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.startViewTransition(apply);
@@ -60,7 +63,7 @@ function shell() {
   const installBtn = h('button', { type: 'button', class: 'btn btn-sm btn-primary', hidden: true, title: 'Cài ứng dụng', 'aria-label': 'Cài ứng dụng' }, h('span', { html: icon('installs'), style: 'display:contents' }), h('span', { class: 'btn-text' }, 'Cài ứng dụng'));
   const themeBtn = h('button', { type: 'button', class: 'theme-switch', 'aria-label': 'Đổi giao diện sáng / tối', onclick: () => theme.set(theme.get() === 'dark' ? 'light' : 'dark') },
     h('span', { html: icon('moon', 'moon'), style: 'display:contents' }), h('span', { html: icon('sun', 'sun'), style: 'display:contents' }), h('span', { class: 'knob' }));
-  const skinBtn = h('button', { type: 'button', class: 'icon-btn skin-btn', title: 'Chuyển kiểu giao diện', 'aria-label': 'Chuyển kiểu giao diện', onclick: () => skin.set(skin.get() === 'classic' ? 'nova' : 'classic') },
+  const skinBtn = h('button', { type: 'button', class: 'icon-btn skin-btn', title: 'Chuyển kiểu giao diện (Nova / Clay)', 'aria-label': 'Chuyển kiểu giao diện', onclick: () => skin.set(skin.get() === 'clay' ? 'nova' : 'clay') },
     h('span', { html: icon('palette'), style: 'display:contents' }));
   const header = h('header', { class: 'header' },
     h('a', { class: 'brand', href: '#/home' }, logo, h('div', null, h('strong', null, 'Beacon', h('span', null, 'Desk')), h('small', null, `Bộ công cụ văn phòng · v${VERSION}`))),
@@ -72,18 +75,26 @@ function shell() {
   const navItems = TOOLS.map((t) => t.sep ? h('li', { class: 'nav-sep', role: 'separator' }) : h('li', null,
     h('a', { class: 'nav-item', href: '#/' + t.id, 'data-id': t.id, 'data-tip': t.label },
       h('span', { class: 'ico', style: tintStyle(t.tint), html: icon(t.icon) }), h('span', { class: 'lbl' }, t.label))));
+  // Khối chào hỏi đầu sidebar: chỉ hiện ở kiểu Clay.
+  const hr = new Date().getHours();
+  const hello = hr < 11 ? 'Chào buổi sáng' : hr < 14 ? 'Chào buổi trưa' : hr < 18 ? 'Chào buổi chiều' : 'Chào buổi tối';
+  const profile = h('div', { class: 'nav-profile', 'aria-hidden': 'true' }, h('span', { class: 'avatar' }, 'BD', h('i')), h('b', null, hello + ' 👋'));
   const sidebar = h('nav', { class: 'sidebar', 'aria-label': 'Chức năng' },
+    profile,
     h('div', { class: 'nav-head' }, h('strong', null, 'Chức năng'), toggle),
     h('div', { class: 'nav-hint' }, 'Chọn công cụ để bắt đầu'),
     h('ul', { class: 'nav' }, navItems));
   const scrim = h('div', { class: 'nav-scrim' });
   const main = h('main', { class: 'main', id: 'main', tabindex: '-1' });
   const ws = h('div', { class: 'workspace' }, sidebar, scrim, main);
+  // Thanh điều hướng nổi dạng viên thuốc ở cuối màn hình: chỉ hiện ở kiểu Clay.
+  const dock = h('nav', { class: 'dock', 'aria-label': 'Điều hướng nhanh' },
+    TOOLS.filter((t) => !t.sep).map((t) => h('a', { href: '#/' + t.id, 'data-id': t.id }, h('span', { html: icon(t.icon), style: 'display:contents' }), h('span', null, t.short || t.label))));
   const footer = h('footer', { class: 'footer' },
     h('span', null, `${APP} v${VERSION} · ${__SINGLE__ ? 'Bản một tệp (ngoại tuyến)' : 'Ứng dụng web cài được'} · Tài liệu được xử lý ngay trên thiết bị`),
     h('span', { class: 'footer-end' }, h('span', { class: 'credit' }, 'Powered by ', h('b', null, AUTHOR)), h('a', { href: '#/about' }, 'Giới thiệu & góp ý')));
 
-  app.replaceChildren(h('div', { class: 'wrap' }, header, hero, ws, footer));
+  app.replaceChildren(h('div', { class: 'wrap' }, header, hero, ws, footer), dock);
 
   // --- thu gọn / mở rộng sidebar ---
   const isPhone = () => matchMedia('(max-width: 760px)').matches;
@@ -125,7 +136,7 @@ function shell() {
   addEventListener('online', updNet); addEventListener('offline', updNet); updNet();
 
   if (!__SINGLE__) setupPwa(installBtn);
-  return { hero, main, sidebar };
+  return { hero, main, sidebar, dock };
 }
 
 const ui = shell();
@@ -133,6 +144,10 @@ const ui = shell();
 async function route() {
   const [, id = 'home', ...rest] = (location.hash || '#/home').split('/');
   const tool = TOOLS.find((t) => t.id === id) || TOOLS[0];
+  ui.dock.querySelectorAll('a').forEach((a) => {
+    if (a.dataset.id === tool.id) { a.setAttribute('aria-current', 'page'); if (a.offsetParent) a.scrollIntoView({ block: 'nearest', inline: 'center' }); }
+    else a.removeAttribute('aria-current');
+  });
   ui.sidebar.querySelectorAll('.nav-item').forEach((a) => {
     if (a.dataset.id === tool.id) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');

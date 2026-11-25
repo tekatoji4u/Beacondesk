@@ -25,8 +25,8 @@
         if (t !== 'dark' && t !== 'light') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         document.documentElement.dataset.theme = t;
       } catch (e) { document.documentElement.dataset.theme = 'light'; }
-      // Kiểu giao diện (nút chuyển đổi trên đầu trang): 'nova' (mặc định) hoặc 'classic'.
-      try { if (localStorage.getItem('bd-skin') === 'classic') document.documentElement.dataset.skin = 'classic'; } catch (e) {}
+      // Kiểu giao diện (nút chuyển đổi trên đầu trang): 'nova' (mặc định) hoặc 'clay'.
+      try { if (localStorage.getItem('bd-skin') === 'clay') document.documentElement.dataset.skin = 'clay'; } catch (e) {}
     })();
   </script>
 </head>
