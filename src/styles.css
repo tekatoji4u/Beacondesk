@@ -498,7 +498,6 @@ dialog.sheet .sb { padding: 4px 20px 20px; overflow-y: auto; max-height: calc(86
   --page-bg: radial-gradient(1200px 600px at 0% 0%, #2a1f55, transparent 60%), radial-gradient(900px 600px at 100% 100%, #3a1a3a, transparent 60%), linear-gradient(135deg, #17122b, #1e1430);
 }
 :root[data-skin="clay"] body { background: var(--page-bg) fixed; background-color: var(--bg); }
-[data-skin="clay"] .wrap { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
 
 /* Đầu trang */
 [data-skin="clay"] .brand .logo { filter: drop-shadow(0 6px 10px rgba(124, 92, 224, .35)); }
@@ -558,10 +557,11 @@ dialog.sheet .sb { padding: 4px 20px 20px; overflow-y: auto; max-height: calc(86
 .dock a:hover { background: rgba(255, 255, 255, .16); }
 .dock a[aria-current="page"] { background: #fff; color: #5b3fc4; box-shadow: 0 6px 14px -6px rgba(40, 20, 110, .6); }
 .dock svg { width: 17px; height: 17px; flex: none; }
-@media (min-width: 761px) { .dock svg { display: none; } }
+/* Máy tính đã có thanh bên, chỉ điện thoại dùng thanh viên thuốc */
+@media (min-width: 761px) { [data-skin="clay"] .dock { display: none; } }
 @media (max-width: 760px) {
   /* Trên điện thoại kiểu Clay dùng thanh viên thuốc thay cho thanh icon bên trái */
-  [data-skin="clay"] .wrap { padding-left: max(12px, env(safe-area-inset-left)); }
+  [data-skin="clay"] .wrap { padding-left: max(12px, env(safe-area-inset-left)); padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
   [data-skin="clay"] .sidebar, [data-skin="clay"] .nav-scrim { display: none !important; }
   [data-skin="clay"] .dock { left: 12px; right: 12px; transform: none; max-width: none; }
   .dock a { flex-direction: column; gap: 2px; padding: 7px 11px; font-size: 11px; border-radius: 22px; min-width: 62px; }
