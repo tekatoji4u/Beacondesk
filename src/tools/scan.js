@@ -6,6 +6,7 @@ import { icon } from '../core/icons.js';
 import { PDFDocument, savePdf, canvasToBlob, embedVnFonts, drawBwImage, MM } from '../core/pdf.js';
 import { loadBitmap, toCanvas } from '../core/image.js';
 import { showResult } from '../core/result.js';
+import { quadEditor } from '../core/quadedit.js';
 
 const SIZES = { a4: [595.28, 841.89], letter: [612, 792] };
 const QUALITY = { high: { side: 3000, q: 0.9 }, normal: { side: 2480, q: 0.82 }, small: { side: 1800, q: 0.7 } };
@@ -79,57 +80,12 @@ export function scanner({ title, sub } = {}) {
     editor.hidden = !it;
     if (!it) return;
     const W = it.c.width, H = it.c.height;
-    const NS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svg.setAttribute('preserveAspectRatio', 'none');
-    const r = Math.max(W, H) / 45;
-    const poly = document.createElementNS(NS, 'polygon');
-    poly.setAttribute('class', 'quad');
-    poly.setAttribute('stroke-width', String(r / 4));
-    svg.append(poly);
-    const dots = it.quad.map((p, k) => {
-      const d = document.createElementNS(NS, 'circle');
-      d.setAttribute('r', String(r));
-      d.setAttribute('class', 'quad-dot');
-      d.setAttribute('tabindex', '0');
-      d.setAttribute('aria-label', ['Góc trên trái', 'Góc trên phải', 'Góc dưới phải', 'Góc dưới trái'][k]);
-      svg.append(d);
-      d.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        d.setPointerCapture(e.pointerId);
-        const move = (ev) => {
-          const b = svg.getBoundingClientRect();
-          it.quad[k] = [Math.max(0, Math.min(W, (ev.clientX - b.left) * W / b.width)), Math.max(0, Math.min(H, (ev.clientY - b.top) * H / b.height))];
-          it.full = false;
-          sync();
-        };
-        const up = () => { d.removeEventListener('pointermove', move); d.removeEventListener('pointerup', up); schedulePreview(); };
-        d.addEventListener('pointermove', move);
-        d.addEventListener('pointerup', up);
-      });
-      d.addEventListener('keydown', (e) => {
-        const step = e.shiftKey ? W / 20 : W / 100;
-        const dx = { ArrowLeft: -step, ArrowRight: step }[e.key] || 0, dy = { ArrowUp: -step, ArrowDown: step }[e.key] || 0;
-        if (!dx && !dy) return;
-        e.preventDefault();
-        it.quad[k] = [Math.max(0, Math.min(W, it.quad[k][0] + dx)), Math.max(0, Math.min(H, it.quad[k][1] + dy))];
-        it.full = false;
-        sync();
-        schedulePreview();
-      });
-      return d;
-    });
-    const sync = () => {
-      poly.setAttribute('points', it.quad.map((p) => p.join(',')).join(' '));
-      it.quad.forEach((p, k) => { dots[k].setAttribute('cx', p[0]); dots[k].setAttribute('cy', p[1]); });
-    };
-    sync();
-    const img = h('img', { src: it.c.toDataURL('image/jpeg', 0.8), alt: 'Ảnh ' + it.file.name });
+    const q = quadEditor(it, { onDone: schedulePreview, alt: 'Ảnh ' + it.file.name });
+    const sync = q.sync;
     editor.replaceChildren(
       h('p', { class: 'sub' }, `Trang ${cur + 1}/${items.length}: kéo 4 chấm vào đúng 4 góc tờ giấy (bàn phím: Tab chọn góc, phím mũi tên để dịch). Bên phải là kết quả.`),
       h('div', { class: 'scan-stage' },
-        h('div', { class: 'quad-stage' }, img, svg),
+        q.el,
         h('div', { class: 'scan-preview' }, previewImg)),
       h('div', { class: 'row mt' },
         button('Tự tìm lại khung', { iconName: 'wand', onClick: () => { it.quad = it.auto.map((p) => [...p]); it.full = false; sync(); schedulePreview(); } }),
