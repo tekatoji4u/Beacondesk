@@ -1,6 +1,7 @@
 // Giới thiệu: cách hoạt động, quyền riêng tư, lưu ý, mã nguồn mở và thư viện sử dụng.
 import { h } from '../core/ui.js';
 import { icon } from '../core/icons.js';
+import { guardLink } from '../core/guard.js';
 import { VERSION, AUTHOR } from '../main.js';
 
 const REPO = 'https://github.com/tekatoji4u/beacondesk';
@@ -32,7 +33,7 @@ export function render() {
       h('p', { class: 'sub' }, 'Báo lỗi hoặc đề xuất tính năng tại trang GitHub của dự án.'),
       h('div', { class: 'row' },
         h('a', { class: 'btn', href: REPO + '/issues', target: '_blank', rel: 'noopener' }, h('span', { html: icon('github'), style: 'display:contents' }), 'Gửi góp ý'),
-        h('a', { class: 'btn btn-ghost', href: REPO, target: '_blank', rel: 'noopener' }, 'Xem mã nguồn')),
+        guardLink(h('a', { class: 'btn btn-ghost', href: REPO, target: '_blank', rel: 'noopener' }, 'Xem mã nguồn'))),
       h('h3', { style: 'margin:18px 0 6px;font-size:15px' }, 'Thư viện sử dụng'),
       h('div', { class: 'row', style: 'gap:6px' }, LIBS.map(([n, l]) => h('span', { class: 'tag info', style: 'font-weight:600' }, `${n} · ${l}`)))));
 }
