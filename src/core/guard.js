@@ -8,7 +8,7 @@ import { h, toast } from './ui.js';
  * Đổi mật khẩu: thay PASS_HASH bằng SHA-256 (hex) của mật khẩu mới, ví dụ:
  *   node -e "console.log(require('crypto').createHash('sha256').update('MAT_KHAU').digest('hex'))"
  */
-const PASS_HASH = '2ae2f5c730898d42a37c9b32921bb0597e468948f40f125619bab679cdd14452';
+const PASS_HASH = 'f960aa86710edc23ab0036199938037488192f23418a1af10fd48eac4936fbdb';
 const KEY = 'bd-src-unlocked';
 
 let unlocked = false;
