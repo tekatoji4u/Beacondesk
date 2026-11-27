@@ -4,6 +4,7 @@ import { icon, tintStyle } from './core/icons.js';
 import { pref, setPref } from './core/store.js';
 import { setupPwa } from './core/pwa.js';
 import { feedVisible } from './core/handoff.js';
+import { setupSourceGuard } from './core/guard.js';
 import LOGO from '../public/icons/icon.svg?url';
 
 export const APP = 'BeaconDesk';
@@ -141,6 +142,7 @@ function shell() {
 }
 
 const ui = shell();
+setupSourceGuard();
 
 async function route() {
   const [, id = 'home', ...rest] = (location.hash || '#/home').split('/');
