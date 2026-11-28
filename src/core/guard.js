@@ -20,7 +20,7 @@ async function sha256(s) {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-function ask() {
+function ask(onUnlock) {
   if (dlg?.open) return;
   const pw = h('input', { type: 'password', autocomplete: 'off', placeholder: 'Mật khẩu', 'aria-label': 'Mật khẩu' });
   const err = h('div', { class: 'notice err', hidden: true }, 'Mật khẩu không đúng.');
@@ -36,7 +36,8 @@ function ask() {
       unlocked = true;
       try { sessionStorage.setItem(KEY, '1'); } catch { /* bỏ qua */ }
       dlg.close();
-      toast('Đã mở khoá. Bấm lại phím tắt để xem mã nguồn.');
+      if (onUnlock) onUnlock();
+      else toast('Đã mở khoá. Bấm lại phím tắt để xem mã nguồn.');
     } else {
       err.hidden = false; pw.select();
     }
@@ -57,6 +58,16 @@ function isSourceShortcut(e) {
   if (mod && e.code === 'KeyS') return true; // lưu trang
   if (mod && (e.shiftKey || e.altKey) && ['KeyI', 'KeyJ', 'KeyC', 'KeyK'].includes(e.code)) return true; // DevTools
   return false;
+}
+
+/** Liên kết tới mã nguồn: hỏi mật khẩu trước khi mở. */
+export function guardLink(a) {
+  a.addEventListener('click', (e) => {
+    if (unlocked) return;
+    e.preventDefault();
+    ask(() => window.open(a.href, a.target || '_self', 'noopener'));
+  });
+  return a;
 }
 
 export function setupSourceGuard() {
